@@ -1,27 +1,29 @@
 module F1 where
 
--- https://www.nayuki.io/page/fast-fibonacci-algorithms
--- used for inspiration
+{- @authors Simon Larspers Qvist, Beata Johansson -}
+
+{- 1 Fibonacci-talen -}    
+
 fib :: Integer -> Integer
--- base cases
 fib 0 = 0
 fib 1 = 1
 fib 2 = 1
-
--- recursive call for odd and even Integers n.
 fib n
-    |odd n = (fib ((n+1) `div` 2))^2 + (fib ((n-1) `div` 2))^2
+    |odd n = (fib ((n+1) `div` 2))^2 + (fib ((n-1) `div` 2))^2                     {- https://www.nayuki.io/page/fast-fibonacci-algorithms used for inspiration -}
     |even n = fib (n `div` 2) * (2 * fib ((n `div` 2) + 1) - fib (n `div` 2))
 
+
+{- 2 Rövarspråket -}    
 
 rovarsprak :: String -> String
 rovarsprak word = concat [if char `elem` ['a','o','e','u','i','y'] then [char] else [char,'o',char]|char <- word]
 
 
-
 karpsravor :: String -> String
-karpsravor word = concat [if char ==  |char <- word]
--- karpsravor "" = ""
+karpsravor "" = ""
+karpsravor (x:'o':z:t) = x: karpsravor t where x = z 
+karpsravor (x:t) = x: karpsravor t
+
 
 --karpsravor word
 --  |(take 3 word) == [[c1],'o',[c2]] && c1 == c2 && c1 `notElem` ['a','o','e','u','i','y'] = concat [karpsravor (drop 2)]
