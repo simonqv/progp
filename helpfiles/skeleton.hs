@@ -18,13 +18,15 @@ fib n
 rovarsprak :: String -> String
 rovarsprak word = concat [if char `elem` ['a','o','e','u','i','y'] then [char] else [char,'o',char]|char <- word]
 
-
 karpsravor :: String -> String
 karpsravor "" = ""
-karpsravor (x:'o':z:t) = x: karpsravor t where x = z 
-karpsravor (x:t) = x: karpsravor t
+karpsravor x
+        | head x == ('o') = 'o': karpsravor (tail x)
+        | tail x == ('o':head x:drop 3 x) = head x: karpsravor (drop 3 x)
+        | otherwise = head x: karpsravor (tail x)
 
 
+{- Kod -}
 --karpsravor word
 --  |(take 3 word) == [[c1],'o',[c2]] && c1 == c2 && c1 `notElem` ['a','o','e','u','i','y'] = concat [karpsravor (drop 2)]
 --  |otherwise = (head word) : karpsravor (tail)
