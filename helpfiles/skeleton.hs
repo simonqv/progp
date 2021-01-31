@@ -1,4 +1,5 @@
 module F1 where
+import Data.Char
 
 {- @authors Simon Larspers Qvist, Beata Johansson -}
 
@@ -24,6 +25,31 @@ karpsravor x
         | head x == ('o') = 'o': karpsravor (tail x)
         | tail x == ('o':head x:drop 3 x) = head x: karpsravor (drop 3 x)
         | otherwise = head x: karpsravor (tail x)
+
+
+{- medellangd -}
+
+medellangd :: String -> Double
+medellangd mening = fromIntegral (antalBokstaver (mening)) / fromIntegral (raknaOrd (mening))
+
+antalBokstaver :: String -> Integer
+antalBokstaver mening = toInteger (length [ bokstav | bokstav <- mening, isAlpha bokstav])
+
+raknaOrd :: String -> Integer
+raknaOrd mening = acc (mening ++ " ") 0
+    where 
+        acc mening i 
+            | mening == "" = i 
+            | isAlpha (head mening) && not (isAlpha (head (tail mening))) = acc (tail mening) (i+1)
+            | otherwise = acc (tail mening) (i)
+
+
+
+
+
+
+
+
 
 
 {- Kod -}
