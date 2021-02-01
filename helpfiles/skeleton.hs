@@ -17,14 +17,13 @@ fib n
 {- 2 Rövarspråket -}    
 
 rovarsprak :: String -> String
-rovarsprak word = concat [if char `elem` ['a','o','e','u','i','y'] then [char] else [char,'o',char]|char <- word]
+rovarsprak ord = concat [if bokstav `elem` ['a','o','e','u','i','y'] then [bokstav] else [bokstav,'o',bokstav]|bokstav <- ord]
+
 
 karpsravor :: String -> String
 karpsravor "" = ""
-karpsravor x
-        | head x == ('o') = 'o': karpsravor (tail x)
-        | tail x == ('o':head x:drop 3 x) = head x: karpsravor (drop 3 x)
-        | otherwise = head x: karpsravor (tail x)
+karpsravor ord = concat [ if head ord `notElem` ['a','o','e','u','i','y'] then head ord: karpsravor (drop 3 ord) else head ord: karpsravor (tail ord)]
+
 
 {- 3 medellangd -}
 
