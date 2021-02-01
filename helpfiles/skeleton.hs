@@ -1,7 +1,7 @@
 module F1 where
 import Data.Char
 
-{- @authors Simon Larspers Qvist, Beata Johansson -}
+{- Namn: Simon Larspers Qvist, Beata Johansson -}
 
 {- 1 Fibonacci-talen -}    
 
@@ -26,8 +26,7 @@ karpsravor x
         | tail x == ('o':head x:drop 3 x) = head x: karpsravor (drop 3 x)
         | otherwise = head x: karpsravor (tail x)
 
-
-{- medellangd -}
+{- 3 medellangd -}
 
 medellangd :: String -> Double
 medellangd mening = fromIntegral (antalBokstaver (mening)) / fromIntegral (raknaOrd (mening))
@@ -44,31 +43,9 @@ raknaOrd mening = acc (mening ++ " ") 0
             | otherwise = acc (tail mening) (i)
 
 
+{- 4 Listskyffling -}
 
-
-
-
-
-
-
-
-{- Kod -}
---karpsravor word
---  |(take 3 word) == [[c1],'o',[c2]] && c1 == c2 && c1 `notElem` ['a','o','e','u','i','y'] = concat [karpsravor (drop 2)]
---  |otherwise = (head word) : karpsravor (tail)
-
---karpsravor "" = ""
--- karpsravor (c1:'o':c2:[tail])
---  |c1 `notElem` ['a','o','e','u','i','y'] && c1 == c2 = c1:karpsravor [tail]
---  |c1 `notElem` ['a','o','e','u','i','y'] && c1 /= c2 = c2:karpsravor [tail]
-
---karpsravor (v1:[tail])
---  |v1 `elem` ['a','o','e','u','i','y'] = v1:karpsravor [tail]
-
--- karpsravor word = concat [if [char, 'o', char] `elem` [word] then  else [] |char <- word]
--- karpsravor s = s
-
--- medellangd s = 1.0
-
--- skyffla s = s
-
+skyffla :: [a] -> [a]
+skyffla [] = []
+skyffla lista = concat [[a | (i, a) <- zip [0..] lista, even i], skyffla [a | (i, a) <- zip [0..] lista, odd i]]
+    
