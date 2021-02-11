@@ -1,10 +1,9 @@
 module F2 where
+import Data.List
 
 {- 2 Molekylära Sekvenser -}
-
--- data Molseq = DNA String String | Protein String String deriving(Show)
 data Molseq = DNA {name :: String, seq :: String} | Protein {name :: String, seq :: String} 
-    deriving(Show, Eq)
+    deriving(Show)
 
 string2seq :: String -> String -> Molseq
 string2seq name seq
@@ -32,4 +31,37 @@ seqDistance a b = error "Arguments are not same Molseq types!"
 alfa :: String -> String -> Double
 alfa a b = fromIntegral((length [ (x,y) | (x,y) <- zip a b, x /= y ])) / fromIntegral(length a)
 
-    
+{- 2 Profiler och sekvenser -}
+
+data Profile = M {type123 :: Molseq, countOfSeq :: Int, profileName :: String, matrix :: [[(Char, Int)]]}
+
+-- Construct Matrix
+nucleotides = "ACGT"
+aminoacids = sort "ARNDCEQGHILKMFPSTWYVX"
+ 
+makeProfileMatrix :: [Molseq] -> [[(Char, Int)]]
+makeProfileMatrix [] = error "Emptysequencelist"
+makeProfileMatrix sl = res
+    where 
+        t = seqType (head sl)
+        defaults =
+            if (t == DNA) then
+                zip nucleotides (replicate (length nucleotides) 0)
+            else
+                zip aminoacids (replicate (length aminoacids) 0)
+        strs = map seqSequence sl
+        tmpl = map (map (\x -> ((head x), (length x))) . group . sort) (transpose strs)
+        equalFst a b = (fst a) == (fst b)
+        res = map sort (map (\l -> unionBy equalFst l defaults) tmpl)
+
+molseqs2profile :: String -> [Molseq] -> Profile
+molseqs2profile name seqList = M (string2seq (head seqList)) (length seqList) (makeProfileMatrix seqList)
+
+
+
+
+
+
+
+
+
