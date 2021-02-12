@@ -104,7 +104,6 @@ seqDistTest3 = snabbtest seqDistance (seqdata foxp4)
 -- Should return 0.4715202300418...
 seqDistTest4 = snabbtest seqDistance (seqdata fam5)
 
-
 test2 = molseqs2profile "profile for figure 1" (seqdata figur)
 
 -- Should return 0.28571542857...
@@ -135,3 +134,4 @@ distMatrixTest1 = distanceMatrix (seqdata foxp4)
 ---fam4                             0.0   167.0
 ---fam5                                     0.0
 distMatrixTest2 = distanceMatrix profiles
+

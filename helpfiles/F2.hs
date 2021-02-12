@@ -2,24 +2,24 @@ module F2 where
 import Data.List
 
 {- 2 Molekylära Sekvenser -}
-data Molseq = DNA {name :: String, seq :: String} | Protein {name :: String, seq :: String} 
+data MolSeq = DNA {name :: String, seq :: String} | Protein {name :: String, seq :: String} 
     deriving(Show)
 
-string2seq :: String -> String -> Molseq
+string2seq :: String -> String -> MolSeq
 string2seq name seq
     | seq == [char | char <- seq, char `elem` "ACGT"] = DNA name seq 
     | otherwise = Protein name seq
 
-seqName :: Molseq -> String
+seqName :: MolSeq -> String
 seqName molseq = name molseq
 
-seqSequence :: Molseq -> String
+seqSequence :: MolSeq -> String
 seqSequence molseq = F2.seq molseq
 
-seqLength :: Molseq -> Int
+seqLength :: MolSeq -> Int
 seqLength molseq = length (F2.seq molseq)
 
-seqDistance :: Molseq -> Molseq -> Double
+seqDistance :: MolSeq -> MolSeq -> Double
 seqDistance (DNA n1 s1) (DNA n2 s2)
     | alfa s1 s2 < 0.74 = -3/4 * log(1 - (4 * (alfa s1 s2))/3) 
     | otherwise = 3.3
@@ -31,15 +31,16 @@ seqDistance a b = error "Arguments are not same Molseq types!"
 alfa :: String -> String -> Double
 alfa a b = fromIntegral((length [ (x,y) | (x,y) <- zip a b, x /= y ])) / fromIntegral(length a)
 
+
 {- 2 Profiler och sekvenser -}
 
-data Profile = M {type123 :: Molseq, countOfSeq :: Int, profileName :: String, matrix :: [[(Char, Int)]]}
+data Profile = M {type123 :: MolSeq, numberOfSeq :: Int, profileName :: String, matrix :: [[(Char, Int)]]}
 
 -- Construct Matrix
 nucleotides = "ACGT"
 aminoacids = sort "ARNDCEQGHILKMFPSTWYVX"
  
-makeProfileMatrix :: [Molseq] -> [[(Char, Int)]]
+makeProfileMatrix :: [MolSeq] -> [[(Char, Int)]]
 makeProfileMatrix [] = error "Emptysequencelist"
 makeProfileMatrix sl = res
     where 
@@ -54,7 +55,9 @@ makeProfileMatrix sl = res
         equalFst a b = (fst a) == (fst b)
         res = map sort (map (\l -> unionBy equalFst l defaults) tmpl)
 
-molseqs2profile :: String -> [Molseq] -> Profile
+-- Lägg till funktion seqType/gör om if & else.
+
+molseqs2profile :: String -> [MolSeq] -> Profile
 molseqs2profile name seqList = M (string2seq (head seqList)) (length seqList) (makeProfileMatrix seqList)
 
 
