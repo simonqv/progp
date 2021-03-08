@@ -26,16 +26,18 @@ def hidden2(x):     # uppgift 4
     # indata x är strängen som vi vill konstruera ett regex för att söka efter
     s = ".*"
     seq = s.join(x)
+
     return seq
 
 def equation():     # uppgift 5
-    return ""
+    # [+-]? valfri "+" eller "-" i början. \d+ krav på minst en siffra. (__) operator plus siffra. (= __(__))$ ett frivilligt "=" följt av samma som vänster om "="
+    return "(^[+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?$)"
 
 def parentheses():  # uppgift 6
-    return ""
+    return "^(\((\((\((\((\(\))*\))*\))*\))*\))+$"
 
 def sorted3():      # uppgift 7
-    return ""
+    return "(^\d*?)((?<=0)1(?=[2-9])|(?<=[0-1])2(?=[3-9])|(?<=[0-2])3(?=[4-9])|(?<=[0-3])4(?=[5-9])|(?<=[0-4])5(?=[6-9])|(?<=[0-5])6(?=[7-9])|(?<=[0-6])7(?=[8-9])|(?<=[0-7])8(?=9))(\d*?$)"
 
 
 ########################################################################
@@ -72,3 +74,26 @@ def main():
 
 
 if __name__ == '__main__': main()
+
+
+
+
+# Diskussion
+#     # hitta första bokstaven i söksträngen, hitta andra. Räkna antal tecken mellan.
+#     # s = ".{" + antal_tecken +"}"
+#     # seq = s.join(x)
+
+# ^
+# (	\(([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?)
+# (	\(([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?)
+# (	\(([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?)
+# (	\(([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?)
+# (	\(([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?)
+# 	\)([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?))*
+# 	\)([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?))*
+# 	\)([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?))*
+# 	\)([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?))*
+# 	\)([+-]?\d+([-\/+*]?\d+)*?(=[+-]?\d+([-\/+*]?\d+)*?)?))+
+# $
+
+# Nestlade lookaheads! Men de blir väldigt mycket text och ganska grötigt.
