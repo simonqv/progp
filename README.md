@@ -26,7 +26,7 @@
 
 <DOWN> ::= "DOWN" <PERIOD>
 
-<COLOR> ::= "COLOR " <HEX>
+<COLOR> ::= "COLOR " <HEX> <PERIOD>
 
 <REP> ::= "REP " <DECIMAL> <QUOTE> <LEONA> <QUOTE>
 
