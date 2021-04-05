@@ -25,4 +25,5 @@ class Token {
 	public TokenType getType() { return type; }
 	public Object getData() { return data; }
 
+
 }
