@@ -81,7 +81,7 @@ public class Lexer {
                 tokens.add(new Token(TokenType.ERROR, rowNum));
             }
             rowNum ++;
-        }
+        } 
     }
 
     public static void main(String args[]) throws java.io.IOException {

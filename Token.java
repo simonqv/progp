@@ -14,7 +14,7 @@ class Token {
 		this.type = type;
 		this.rowNumber = rowNumber;
 		this.data = null;
-	}
+	} 
 
     //  DECIMAL, HEX
 	public Token(TokenType type, int rowNumber, Object data) {
