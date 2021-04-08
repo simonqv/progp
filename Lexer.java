@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public class Lexer {
     private List<Token> tokens;
     private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+\\s*|^\\s$|\\n");
+    private int current;
 
     public static List<String> readInput() {
         List<String> list = new ArrayList<>();
@@ -18,19 +19,19 @@ public class Lexer {
         String nextLine;
         while (scanner.hasNext()) {
             nextLine = scanner.nextLine();
-            
+
             if(nextLine.matches(".*%.*")) {
                 nextLine = nextLine.replaceAll("%.*", "");
             }
-            
+
             inputAsString.replace(0, inputAsString.length(), nextLine);
             list.add(inputAsString.toString().toUpperCase().trim() + " ");
         }
         scanner.close();
-        for (String x : list) {
-            System.out.println(x);
+    //    for (String x : list) {
+    //        System.out.println(x);
 
-        }
+    //    }
         return list;
     }
 
@@ -39,10 +40,10 @@ public class Lexer {
         int rowNum = 1;
         tokens = new ArrayList<Token>();
 
-        System.out.println(lines);
+        // System.out.println(lines);
 
         for (String line : lines) {
-            // "COLOR "
+
             Matcher m = validTokenPattern.matcher(line);
             int position = 0;
 
@@ -71,7 +72,7 @@ public class Lexer {
                 if (m.group().matches("#[A-F0-9]{6}\\s*")) {
                     tokens.add(new Token(TokenType.HEX, rowNum, m.group().trim()));
                 } else if (m.group().matches("\\d+\\s*")) {
-                    tokens.add(new Token(TokenType.DECMIAL, rowNum, Integer.parseInt(m.group().trim())));
+                    tokens.add(new Token(TokenType.DECIMAL, rowNum, Integer.parseInt(m.group().trim())));
                 }
 
                 position = m.end();
@@ -80,14 +81,28 @@ public class Lexer {
             if (position != line.length()) {
                 tokens.add(new Token(TokenType.ERROR, rowNum));
             }
-            rowNum ++;
-        } 
+            rowNum++;
+        }
     }
 
-    public static void main(String args[]) throws java.io.IOException {
-        Lexer x = new Lexer();
-        for (Token t : x.tokens) {
-            System.out.println(t);
-        }
+    // Kika på nästa token i indata, utan att gå vidare
+  	public Token peekToken(){
+  		return tokens.get(current);
+  	}
+
+  	// Hämta nästa token i indata och gå framåt i indata
+  	public Token nextToken() {
+  		Token res = peekToken();
+  		current++;
+  		return res;
+  	}
+
+    public boolean hasMoreTokens() {
+      return current < tokens.size();
+    }
+
+    @Override
+    public String toString() {
+      return tokens.toString();
     }
 }
