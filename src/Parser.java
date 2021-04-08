@@ -1,4 +1,5 @@
-
+import java.util.List;
+import java.util.ArrayList;
 
 public class Parser {
 
@@ -73,11 +74,42 @@ public class Parser {
             }
 
             return new LeafNode(token.getType(), hex.getData());
-        } //else if (token.getType() == TokenType.REP) {}
+        } else if (token.getType() == TokenType.REP) {
+            // Save the decimal token.
+            Token decimal = lexer.nextToken();
+
+            // DECIMAL
+            if(decimal.getType() != TokenType.DECIMAL) {
+              // ERROR
+              System.out.println("ERROR DECIMAL");
+            }
+
+            Token next = lexer.nextToken();
+            // If next == "
+            if (next.getType() == TokenType.QUOTE) {
+              // bygga lista med barn
+              List<Token> hejsan = new ArrayList<>();
+              while (lexer.peekToken().getType() != TokenType.QUOTE) {
+                  hejsan.add(lexer.nextToken());
+              }
+              // kasta "
+              lexer.nextToken();
+              Lexer l = new Lexer(hejsan);
+              return new BranchNode(new LeafNode(token.getType(), decimal.getData()), new Parser(l).parse());
+
+            } else if (next.validInstruction()) {
+              // Ingen lista, bara ett leaf till höger.
+              System.out.println("EJ KLAR");
+            } else {
+              System.out.println("REP ERROR");
+            }
+          }
+
         else {
           System.out.println("ERROR ERROR");
           return null;
         }
-      }
 
+      }
+      return null;
 }

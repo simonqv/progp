@@ -28,11 +28,11 @@ public class Lexer {
             list.add(inputAsString.toString().toUpperCase().trim() + " ");
         }
         scanner.close();
-    //    for (String x : list) {
-    //        System.out.println(x);
-
-    //    }
         return list;
+    }
+
+    public Lexer(List<Token> tokens) {
+      this.tokens = tokens;
     }
 
     public Lexer() {
@@ -54,7 +54,6 @@ public class Lexer {
                     tokens.add(new Token(TokenType.ERROR, rowNum));
                 }
 
-                // Non-terminal tokens. No data.
                 switch (m.group().trim()) {
                     case "FORW" -> tokens.add(new Token(TokenType.FORW, rowNum));
                     case "BACK" -> tokens.add(new Token(TokenType.BACK, rowNum));
@@ -68,7 +67,6 @@ public class Lexer {
                     case "COLOR" -> tokens.add(new Token(TokenType.COLOR, rowNum));
                 }
 
-                // Terminal tokens. With data.
                 if (m.group().matches("#[A-F0-9]{6}\\s*")) {
                     tokens.add(new Token(TokenType.HEX, rowNum, m.group().trim()));
                 } else if (m.group().matches("\\d+\\s*")) {
