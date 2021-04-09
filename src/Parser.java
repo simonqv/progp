@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ public class Parser {
     public ParseTree parse() {
       // Start symbol
       ParseTree parseTree = expressionBranch();
-      System.out.println(parseTree.process());
+      //System.out.println(parseTree.process());
 
       return parseTree;
     }
@@ -29,34 +30,34 @@ public class Parser {
 
     // Parse the Lexer object tokens.
     private ParseTree tokenLeaf() {
-      // Look ahead to the next token in the sequence,
-      // in order to select the corresponding production.
-      Token token = lexer.nextToken();
+        // Look ahead to the next token in the sequence,
+        // in order to select the corresponding production.
+        Token token = lexer.nextToken();
 
-      // Terminal token -> Create new BranchNode in syntax tree.
-      if(token.getType() == TokenType.FORW || token.getType() == TokenType.BACK
-      || token.getType() == TokenType.LEFT || token.getType() == TokenType.RIGHT) {
+        // Terminal token -> Create new BranchNode in syntax tree.
+        if (token.getType() == TokenType.FORW || token.getType() == TokenType.BACK
+                || token.getType() == TokenType.LEFT || token.getType() == TokenType.RIGHT) {
 
-          // Save the decimal token.
-          Token decimal = lexer.nextToken();
+            // Save the decimal token.
+            Token decimal = lexer.nextToken();
 
-          // DECIMAL
-          if(decimal.getType() != TokenType.DECIMAL) {
-            // ERROR
-            System.out.println("ERROR DECIMAL");
-          }
-          // PERIOD
-          if(lexer.nextToken().getType() != TokenType.PERIOD) {
-            // ERROR
-            System.out.println("ERROR PERIOD");
-          }
-          // NEW LeafNode
-          return new LeafNode(token.getType(), decimal.getData());
+            // DECIMAL
+            if (decimal.getType() != TokenType.DECIMAL) {
+                // ERROR
+                System.out.println("ERROR DECIMAL");
+            }
+            // PERIOD
+            if (lexer.nextToken().getType() != TokenType.PERIOD) {
+                // ERROR
+                System.out.println("ERROR PERIOD");
+            }
+            // NEW LeafNode
+            return new LeafNode(token.getType(), decimal.getData());
         } else if (token.getType() == TokenType.UP || token.getType() == TokenType.DOWN) {
 
-            if(lexer.nextToken().getType() != TokenType.PERIOD){
-              // ERROR
-              System.out.println("ERROR PERIOD");
+            if (lexer.nextToken().getType() != TokenType.PERIOD) {
+                // ERROR
+                System.out.println("ERROR PERIOD");
             }
             return new LeafNode(token.getType());
         } else if (token.getType() == TokenType.COLOR) {
@@ -64,13 +65,13 @@ public class Parser {
             Token hex = lexer.nextToken();
 
             if (hex.getType() != TokenType.HEX) {
-              // ERROR
-              System.out.println("ERROR HEX");
+                // ERROR
+                System.out.println("ERROR HEX");
             }
 
-            if(lexer.nextToken().getType() != TokenType.PERIOD){
-              // ERROR
-              System.out.println("ERROR PERIOD");
+            if (lexer.nextToken().getType() != TokenType.PERIOD) {
+                // ERROR
+                System.out.println("ERROR PERIOD");
             }
 
             return new LeafNode(token.getType(), hex.getData());
@@ -79,37 +80,92 @@ public class Parser {
             Token decimal = lexer.nextToken();
 
             // DECIMAL
-            if(decimal.getType() != TokenType.DECIMAL) {
-              // ERROR
-              System.out.println("ERROR DECIMAL");
+            if (decimal.getType() != TokenType.DECIMAL) {
+                // ERROR
+                System.out.println("ERROR DECIMAL");
             }
-
             Token next = lexer.nextToken();
-            // If next == "
             if (next.getType() == TokenType.QUOTE) {
-              // bygga lista med barn
-              List<Token> hejsan = new ArrayList<>();
-              while (lexer.peekToken().getType() != TokenType.QUOTE) {
-                  hejsan.add(lexer.nextToken());
-              }
-              // kasta "
-              lexer.nextToken();
-              Lexer l = new Lexer(hejsan);
-              return new BranchNode(new LeafNode(token.getType(), decimal.getData()), new Parser(l).parse());
+
+                return new BranchNode(new BranchNode(new LeafNode(token.getType(),decimal.getData()), repHelper()), expressionBranch());
 
             } else if (next.validInstruction()) {
-              // Ingen lista, bara ett leaf till höger.
-              System.out.println("EJ KLAR");
+                // Ingen lista, bara ett leaf till höger.
+                System.out.println("EJ KLAR");
             } else {
-              System.out.println("REP ERROR");
+                System.out.println("ERROR ERROR");
+                return null;
             }
+            return null;
+        }
+        return null;
+    }
+
+
+    private ParseTree repHelper() {
+        // No QUOTE
+        List<Token> repArg = new ArrayList<>();
+        while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
+            repArg.add(lexer.nextToken());
+        }
+        if (repArg.stream().anyMatch(o -> o.getType().equals(TokenType.REP))) {
+            // Add QUOTE
+            repArg.add(lexer.nextToken());
+
+            while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
+                repArg.add(lexer.nextToken());
+            }
+            repArg.add(lexer.nextToken());
+            Lexer ll = new Lexer((repArg));
+            return new BranchNode(new Parser(ll).parse(), repHelper());
+        }
+        if (!repArg.isEmpty()) {
+            Lexer l = new Lexer(repArg);
+            return new Parser(l).parse();
+        }
+        // Throw away last quote
+        //lexer.nextToken();
+        return parse();
+    }
+
+
+
+        //    if (repArg.get(repArg.size() - 2).getType() == TokenType.REP) {
+        //        return new BranchNode(new Parser(new Lexer(repArg)).parse(), repHelper());
+        //    }
+        //    if (repArg.contains(TokenType.REP)) {
+        //
+        //    }
+
+    /*
+      public ParseTree repHelper() {
+
+          // bygga lista med barn
+          List<Token> repArguments = new ArrayList<>();
+
+          while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
+
+              if (lexer.peekToken().getType() == TokenType.REP) {
+                  Token rep = lexer.nextToken();
+                  Token dec = lexer.nextToken();
+                  if (dec.getType() == TokenType.DECIMAL) {
+                    return new BranchNode(new LeafNode(rep.getType(), dec.getData()), repHelper());
+                  } else {
+                      System.out.println("Error in repHelper");
+                  }
+              }
+
+              repArguments.add(lexer.nextToken());
           }
 
-        else {
-          System.out.println("ERROR ERROR");
-          return null;
-        }
 
-      }
-      return null;
+          while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
+
+          }
+
+          // kasta "
+          lexer.nextToken();
+          Lexer l = new Lexer(repArguments);
+}
+*/
 }
