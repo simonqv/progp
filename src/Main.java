@@ -5,6 +5,5 @@ public class Main {
     Lexer sequenceToTokens = new Lexer();
     Parser parsedTokens = new Parser(sequenceToTokens);
     ParseTree parseTree = parsedTokens.parse();
-    System.out.println(parseTree.process());
   }
 }

@@ -88,14 +88,14 @@ public class Parser {
             // If next == "
             if (next.getType() == TokenType.QUOTE) {
               // bygga lista med barn
-              List<Token> hejsan = new ArrayList<>();
-              while (lexer.peekToken().getType() != TokenType.QUOTE) {
-                  hejsan.add(lexer.nextToken());
+                List<Token> arguments = new ArrayList<>();
+                while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
+                arguments.add(lexer.nextToken());
               }
               // kasta "
               lexer.nextToken();
-              Lexer l = new Lexer(hejsan);
-              return new BranchNode(new LeafNode(token.getType(), decimal.getData()), new Parser(l).parse());
+              Lexer l = new Lexer(arguments);
+              return new BranchNode(new LeafNode(token.getType(), decimal.getData()), new Parser(l).expressionBranch());
 
             } else if (next.validInstruction()) {
               // Ingen lista, bara ett leaf till höger.
@@ -109,7 +109,19 @@ public class Parser {
           System.out.println("ERROR ERROR");
           return null;
         }
-
+        return null;
       }
-      return null;
+
+      // public List<Token> repHelper(){
+      //
+      //   List<Token> arguments = new ArrayList<>();
+      //   while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
+      //
+      //       if (lexer.peekToken() == TokenType.REP) {
+      //         List<Token> innerRep = repHelper();
+      //       }
+      //       arguments.add(lexer.nextToken());
+      //   }
+      //   return arguments;
+      // }
 }

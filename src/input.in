@@ -2,6 +2,5 @@
 % Nu ritar vi en kvadrat
 DOWN.
 FORW 1. LEFT 90.
-FORW 1. LEFT 90.
-FORW 1. LEFT 90.
+REP 3 "FORW 1. LEFT 90."
 FORW 1. LEFT 90.
