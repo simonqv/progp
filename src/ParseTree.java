@@ -1,7 +1,7 @@
 
 // ParseTree.
 abstract class ParseTree {
-	abstract public String process();
+	abstract public ParseTree process();
 }
 
 // Node for terminal tokens.
@@ -19,8 +19,17 @@ class LeafNode extends ParseTree {
 		this.data = data;
 	}
 
-	public String process() {
-		return instruction.toString() + " " + data;
+    public TokenType getInstruction() {
+        return instruction;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public LeafNode process() {
+		//return instruction.toString() + " " + data;
+        return this;
 	}
 }
 
@@ -34,12 +43,13 @@ class BranchNode extends ParseTree {
 		this.right = right;
 	}
 
-	public String process() {
-		try{
-			return "[" + left.process() + " - " + right.process() + "]"; //"[" + left.process() + ";" + right.process() + " ]";
-		} catch(NullPointerException e) {
-			return "a[" + left.process() + " - " + "]b";
-		}
+	public ParseTree process() {
+
+            return this.left.process();
+
+
+
+        //return "[" + left.process() + " - " + right.process() + "]"; //"[" + left.process() + ";" + right.process() + " ]";
 	}
 
 }
