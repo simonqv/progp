@@ -67,7 +67,7 @@ public class Parser {
             if (lexer.peekToken().getType() == TokenType.QUOTE) {
                 // Add a new branch with REP-token to the left, and arguments to the right.
                 // The REP arguments will be a branch.
-                // Eat Quoute
+                // Eat QUOTE.
                 lexer.nextToken();
                 return new BranchNode(new LeafNode(token.getType(), decimal.getData()), expressionBranch());
                 // If no QUOTE exists, then only repeat one instruction.
