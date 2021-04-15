@@ -1,4 +1,5 @@
 % Det här är en kommentar
 % Nu ritar vi en kvadrat
-LEFT 20.
-REP 2 " REP 3 "FORW 1. BACK 1. RIGHT 90."" FORW 2.
+FORW 1. LEFT 90.
+REP 2 "REP 3 "FORW 1. LEFT 90. FORW 2." "
+FORW 1. LEFT 90.

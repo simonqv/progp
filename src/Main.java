@@ -5,6 +5,6 @@ public class Main {
     Parser parsedTokens = new Parser(sequenceToTokens);
     //System.out.println(sequenceToTokens);
     ParseTree parseTree = parsedTokens.parse();
-    //System.out.println(parseTree.process());
+    System.out.println(parseTree.process());
   }
 }

@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Parser {
 
     private Lexer lexer;
@@ -19,7 +22,6 @@ public class Parser {
       // Start building the tree.
       ParseTree parseTree = expressionBranch();
       // Print the parse tree.
-      System.out.println(parseTree.process());
       return parseTree;
     }
 
@@ -49,7 +51,6 @@ public class Parser {
     private ParseTree tokenLeaf() {
         // Look ahead to the next token in the sequence.
         Token token = lexer.nextToken();
-        System.out.println(token);
 
         // Select the corresponding production.
 
@@ -75,11 +76,9 @@ public class Parser {
                 // Add a new branch with REP-token to the left, and the argument to the right as a leaf.
                 return new BranchNode(new LeafNode(token.getType(), decimal.getData()), tokenLeaf());
             } else if (lexer.peekToken().getType() == TokenType.REP) {
-                System.out.println("hej");
-                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), expressionBranch());
+                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), tokenLeaf());
             } else {
                 // Throw error.
-                System.out.println("error");
                 return new LeafNode(TokenType.ERROR, decimal.getRow());
             }
         } else {
@@ -131,10 +130,8 @@ public class Parser {
                 return new LeafNode(token.getType(), hex.getData());
             } else { 
                 // Throw error.
-                System.out.println("hejsan");
                 return new LeafNode(TokenType.ERROR, token.getRow());
             }
         }
     }
-
 }
