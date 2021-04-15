@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Lexer {
     private List<Token> tokens;
     private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+\\s*|^\\s$|\\n");
-    private int current;
+    private int current = 0;
 
     public static List<String> readInput() {
         List<String> list = new ArrayList<>();

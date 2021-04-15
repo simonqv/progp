@@ -1,127 +1,140 @@
-import java.util.List;
-import java.util.ArrayList;
-
 public class Parser {
 
     private Lexer lexer;
 
-    // Constructor.
+    /**
+     * Construct a Parser object.
+     * @param lexer
+     */
     public Parser(Lexer lexer) {
   		this.lexer = lexer;
   	}
 
+    /**
+     * Parse the tokens into a parse tree.
+     * 
+     * @return A parse tree.
+     */
     public ParseTree parse() {
-      // Start symbol
+      // Start building the tree.
       ParseTree parseTree = expressionBranch();
+      // Print the parse tree.
       System.out.println(parseTree.process());
-
       return parseTree;
     }
 
+    /**
+     * Build the parse tree by adding Branch nodes that can contain either terminal tokens (leaves) or other non-terminal tokens (branches).
+     * @return node, which can be a leaf or branch.
+     */
     private ParseTree expressionBranch() {
       ParseTree node = tokenLeaf();
-      // Build branchnodes if next token is an instruction.
-      if (lexer.hasMoreTokens() && lexer.peekToken().validInstruction()){
+      // If next token is quote, move one token forward (end quote).
+      if (lexer.hasMoreTokens() && lexer.peekToken().getType() == TokenType.QUOTE){
+        lexer.nextToken();
+      } 
+      // If next token is an instruction, make recursive call on right side.
+      else if (lexer.hasMoreTokens() && lexer.peekToken().validInstruction()){
         node = new BranchNode(node, expressionBranch());
       }
+    
       return node;
     }
 
-    // Parse the Lexer object tokens.
+    /**
+     * Match each token to the corresponding production rule and discover potential errors in the token sequence.
+     * 
+     * @return Either a branchNode, LeafNode or Error.
+     */
     private ParseTree tokenLeaf() {
-      // Look ahead to the next token in the sequence,
-      // in order to select the corresponding production.
-      Token token = lexer.nextToken();
+        // Look ahead to the next token in the sequence.
+        Token token = lexer.nextToken();
+        System.out.println(token);
 
-      // Terminal token -> Create new BranchNode in syntax tree.
-      if(token.getType() == TokenType.FORW || token.getType() == TokenType.BACK
-      || token.getType() == TokenType.LEFT || token.getType() == TokenType.RIGHT) {
+        // Select the corresponding production.
 
-          // Save the decimal token.
-          Token decimal = lexer.nextToken();
-
-          // DECIMAL
-          if(decimal.getType() != TokenType.DECIMAL) {
-            // ERROR
-            System.out.println("ERROR DECIMAL");
-          }
-          // PERIOD
-          if(lexer.nextToken().getType() != TokenType.PERIOD) {
-            // ERROR
-            System.out.println("ERROR PERIOD");
-          }
-          // NEW LeafNode
-          return new LeafNode(token.getType(), decimal.getData());
-        } else if (token.getType() == TokenType.UP || token.getType() == TokenType.DOWN) {
-
-            if(lexer.nextToken().getType() != TokenType.PERIOD){
-              // ERROR
-              System.out.println("ERROR PERIOD");
-            }
-            return new LeafNode(token.getType());
-        } else if (token.getType() == TokenType.COLOR) {
-
-            Token hex = lexer.nextToken();
-
-            if (hex.getType() != TokenType.HEX) {
-              // ERROR
-              System.out.println("ERROR HEX");
-            }
-
-            if(lexer.nextToken().getType() != TokenType.PERIOD){
-              // ERROR
-              System.out.println("ERROR PERIOD");
-            }
-
-            return new LeafNode(token.getType(), hex.getData());
-        } else if (token.getType() == TokenType.REP) {
-            // Save the decimal token.
+        // REP token.
+        if (token.getType() == TokenType.REP) {
+            // Save the next token.
             Token decimal = lexer.nextToken();
-
-            // DECIMAL
-            if(decimal.getType() != TokenType.DECIMAL) {
-              // ERROR
-              System.out.println("ERROR DECIMAL");
+            // After REP there should be a DECIMAL.
+            if (decimal.getType() != TokenType.DECIMAL) {
+                // Throw error.
+                System.out.println("Dec Error");
+                return new LeafNode(TokenType.ERROR, decimal.getRow());
             }
-
-            Token next = lexer.nextToken();
-            // If next == "
-            if (next.getType() == TokenType.QUOTE) {
-              // bygga lista med barn
-                List<Token> arguments = new ArrayList<>();
-                while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
-                arguments.add(lexer.nextToken());
-              }
-              // kasta "
-              lexer.nextToken();
-              Lexer l = new Lexer(arguments);
-              return new BranchNode(new LeafNode(token.getType(), decimal.getData()), new Parser(l).expressionBranch());
-
-            } else if (next.validInstruction()) {
-              // Ingen lista, bara ett leaf till höger.
-              System.out.println("EJ KLAR");
+            // After DECIMAL there should be a QUOTE.
+            if (lexer.peekToken().getType() == TokenType.QUOTE) {
+                // Add a new branch with REP-token to the left, and arguments to the right.
+                // The REP arguments will be a branch.
+                // Eat Quoute
+                lexer.nextToken();
+                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), expressionBranch());
+                // If no QUOTE exists, then only repeat one instruction.
+            } else if (lexer.peekToken().validInstruction() && lexer.peekToken().getType() != TokenType.REP) {
+                // Add a new branch with REP-token to the left, and the argument to the right as a leaf.
+                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), tokenLeaf());
+            } else if (lexer.peekToken().getType() == TokenType.REP) {
+                System.out.println("hej");
+                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), expressionBranch());
             } else {
-              System.out.println("REP ERROR");
+                // Throw error.
+                System.out.println("error");
+                return new LeafNode(TokenType.ERROR, decimal.getRow());
             }
-          }
-
-        else {
-          System.out.println("ERROR ERROR");
-          return null;
+        } else {
+            // Terminal tokens that must be followed by a DECIMAL: FORW, BACK, LEFT, RIGHT.
+            if (token.getType() == TokenType.FORW || token.getType() == TokenType.BACK
+                    || token.getType() == TokenType.LEFT || token.getType() == TokenType.RIGHT) {
+                // Save the next token.
+                Token decimal = lexer.nextToken();
+                // After the token there should be a DECIMAL.
+                if (decimal.getType() != TokenType.DECIMAL) {
+                    // Throw error.
+                    return new LeafNode(TokenType.ERROR, decimal.getRow());
+                }
+                Token period = lexer.nextToken();
+                // After DECIMAL there should be a PERIOD.
+                if (period.getType() != TokenType.PERIOD) {
+                    // Throw error.
+                    return new LeafNode(TokenType.ERROR, period.getRow());
+                }
+                // Add the terminal token to the parse tree.
+                return new LeafNode(token.getType(), decimal.getData());
+            // Terminal tokens that takes no arguments: UP, DOWN.
+            } else if (token.getType() == TokenType.UP || token.getType() == TokenType.DOWN) {
+                // Save the next token.
+                Token period = lexer.nextToken();
+                // After the token there should be a PERIOD.
+                if (period.getType() != TokenType.PERIOD) {
+                    // Throw error.
+                    return new LeafNode(TokenType.ERROR, period.getRow());
+                }
+                // Add the terminal token to the parse tree.
+                return new LeafNode(token.getType());
+            // Terminal tokens that require a HEX argument: COLOR.
+            } else if (token.getType() == TokenType.COLOR) {
+                // Save the next token.
+                Token hex = lexer.nextToken();
+                // After the token there should be a HEX.
+                if (hex.getType() != TokenType.HEX) {
+                    // Throw error.
+                    return new LeafNode(TokenType.ERROR, hex.getRow());
+                }
+                Token period = lexer.nextToken();
+                // After HEX there should be a PERIOD.
+                if (period.getType() != TokenType.PERIOD) {
+                    // Throw error.
+                    return new LeafNode(TokenType.ERROR, period.getRow());
+                }
+                // Add the terminal token to the parse tree.
+                return new LeafNode(token.getType(), hex.getData());
+            } else { 
+                // Throw error.
+                System.out.println("hejsan");
+                return new LeafNode(TokenType.ERROR, token.getRow());
+            }
         }
-        return null;
-      }
+    }
 
-      // public List<Token> repHelper(){
-      //
-      //   List<Token> arguments = new ArrayList<>();
-      //   while (lexer.hasMoreTokens() && lexer.peekToken().getType() != TokenType.QUOTE) {
-      //
-      //       if (lexer.peekToken() == TokenType.REP) {
-      //         List<Token> innerRep = repHelper();
-      //       }
-      //       arguments.add(lexer.nextToken());
-      //   }
-      //   return arguments;
-      // }
 }

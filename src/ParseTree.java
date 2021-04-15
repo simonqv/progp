@@ -35,7 +35,11 @@ class BranchNode extends ParseTree {
 	}
 
 	public String process() {
-		return "[" + left.process() + " - " + right.process() + "]"; //"[" + left.process() + ";" + right.process() + " ]";
+		try{
+			return "[" + left.process() + " - " + right.process() + "]"; //"[" + left.process() + ";" + right.process() + " ]";
+		} catch(NullPointerException e) {
+			return "a[" + left.process() + " - " + "]b";
+		}
 	}
 
 }
