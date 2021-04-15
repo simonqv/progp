@@ -69,14 +69,14 @@ public class Parser {
                 // The REP arguments will be a branch.
                 // Eat QUOTE.
                 lexer.nextToken();
+                System.out.println("HEJ");
                 return new BranchNode(new LeafNode(token.getType(), decimal.getData()), expressionBranch());
                 // If no QUOTE exists, then only repeat one instruction.
             } else if (lexer.peekToken().validInstruction() && lexer.peekToken().getType() != TokenType.REP) {
                 // Add a new branch with REP-token to the left, and the argument to the right as a leaf.
                 return new BranchNode(new LeafNode(token.getType(), decimal.getData()), tokenLeaf());
             } else if (lexer.peekToken().getType() == TokenType.REP) {
-                System.out.println("hej");
-                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), expressionBranch());
+                return new BranchNode(new LeafNode(token.getType(), decimal.getData()), tokenLeaf());
             } else {
                 // Throw error.
                 System.out.println("error");
@@ -131,7 +131,6 @@ public class Parser {
                 return new LeafNode(token.getType(), hex.getData());
             } else { 
                 // Throw error.
-                System.out.println("hejsan");
                 return new LeafNode(TokenType.ERROR, token.getRow());
             }
         }
