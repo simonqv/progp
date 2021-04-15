@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class Lexer {
     private List<Token> tokens;
-    private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+\\s*|^\\s$|\\n");
+    private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+(?=(\\.|\\s))\\s*|^\\s$|\\n");
     private int current = 0;
 
     public static List<String> readInput() {
@@ -87,6 +87,10 @@ public class Lexer {
   	public Token peekToken(){
   		return tokens.get(current);
   	}
+
+  	public Token currentToken() {
+        return tokens.get(current - 1);
+    }
 
   	// Hämta nästa token i indata och gå framåt i indata
   	public Token nextToken() {

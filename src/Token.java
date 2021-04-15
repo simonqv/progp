@@ -1,7 +1,7 @@
 // Source: Exempelkod
 
 enum TokenType {
-    FORW, BACK, LEFT, RIGHT, UP, DOWN, QUOTE, REP, PERIOD, COLOR, DECIMAL, HEX, ERROR
+    FORW, BACK, LEFT, RIGHT, UP, DOWN, QUOTE, REP, PERIOD, COLOR, DECIMAL, HEX, ERROR, EOF
 }
 
 class Token {
