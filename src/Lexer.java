@@ -1,3 +1,4 @@
+// LAB S2 - DD1362 Programmeringsparadigm.
 // Simon Larpers Qvist
 // Beata Johansson
 
@@ -9,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Lexer {
     private List<Token> tokens;
-    private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+\\s*|^\\s$|\\n");
+    private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+(?=(\\.|\\s))\\s*|^\\s$|\\n");
     private int current = 0;
 
     public static List<String> readInput() {
@@ -40,20 +41,14 @@ public class Lexer {
         int rowNum = 1;
         tokens = new ArrayList<Token>();
 
-        // System.out.println(lines);
-
         for (String line : lines) {
-
             Matcher m = validTokenPattern.matcher(line);
             int position = 0;
-
             while (m.find()) {
-
                 // Check if input contains non-tokens.
                 if (m.start() != position) {
                     tokens.add(new Token(TokenType.ERROR, rowNum));
                 }
-
                 switch (m.group().trim()) {
                     case "FORW" -> tokens.add(new Token(TokenType.FORW, rowNum));
                     case "BACK" -> tokens.add(new Token(TokenType.BACK, rowNum));
@@ -66,15 +61,12 @@ public class Lexer {
                     case "." -> tokens.add(new Token(TokenType.PERIOD, rowNum));
                     case "COLOR" -> tokens.add(new Token(TokenType.COLOR, rowNum));
                 }
-
                 if (m.group().matches("#[A-F0-9]{6}\\s*")) {
                     tokens.add(new Token(TokenType.HEX, rowNum, m.group().trim()));
                 } else if (m.group().matches("\\d+\\s*")) {
                     tokens.add(new Token(TokenType.DECIMAL, rowNum, Integer.parseInt(m.group().trim())));
                 }
-
                 position = m.end();
-
             }
             if (position != line.length()) {
                 tokens.add(new Token(TokenType.ERROR, rowNum));
@@ -83,22 +75,43 @@ public class Lexer {
         }
     }
 
-    // Kika på nästa token i indata, utan att gå vidare
+    /**
+     * Peek on next token, without moving forward in the sequence.
+     * @return Next token.
+     */
   	public Token peekToken(){
   		return tokens.get(current);
   	}
 
-  	// Hämta nästa token i indata och gå framåt i indata
+    /**
+     * Get the current token.
+     * @return Current token.
+     */
+  	public Token currentToken() {
+        return tokens.get(current - 1);
+    }
+
+    /**
+     * Get the next token and move forward in the sequence.
+     * @return
+     */
   	public Token nextToken() {
   		Token res = peekToken();
   		current++;
   		return res;
   	}
 
+    /**
+     * Check if there are tokens left in the sequence.
+     * @return true or false.
+     */
     public boolean hasMoreTokens() {
       return current < tokens.size();
     }
 
+    /**
+     * Print method for the sequence of tokens.
+     */
     @Override
     public String toString() {
       return tokens.toString();
