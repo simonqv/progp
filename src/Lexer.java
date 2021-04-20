@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Lexer {
     private List<Token> tokens;
-    private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|\\d+(?=(\\.|\\s))\\s*|^\\s$|\\n");
+    private static final Pattern validTokenPattern = Pattern.compile("DOWN\\s*|UP\\s*|FORW\\s+|BACK\\s+|LEFT\\s+|RIGHT\\s+|REP\\s+|COLOR\\s+|\\.\\s*|\"\\s*|#[A-F0-9]{6}\\s*|[1-9]\\d*(?=(\\.|\\s))\\s*|^\\s$|\\n");
     private int current = 0;
 
     public static List<String> readInput() {
@@ -50,16 +50,34 @@ public class Lexer {
                     tokens.add(new Token(TokenType.ERROR, rowNum));
                 }
                 switch (m.group().trim()) {
-                    case "FORW" -> tokens.add(new Token(TokenType.FORW, rowNum));
-                    case "BACK" -> tokens.add(new Token(TokenType.BACK, rowNum));
-                    case "UP" -> tokens.add(new Token(TokenType.UP, rowNum));
-                    case "DOWN" -> tokens.add(new Token(TokenType.DOWN, rowNum));
-                    case "LEFT" -> tokens.add(new Token(TokenType.LEFT, rowNum));
-                    case "RIGHT" -> tokens.add(new Token(TokenType.RIGHT, rowNum));
-                    case "REP" -> tokens.add(new Token(TokenType.REP, rowNum));
-                    case "\"" -> tokens.add(new Token(TokenType.QUOTE, rowNum));
-                    case "." -> tokens.add(new Token(TokenType.PERIOD, rowNum));
-                    case "COLOR" -> tokens.add(new Token(TokenType.COLOR, rowNum));
+                    case "FORW":
+                        tokens.add(new Token(TokenType.FORW, rowNum));
+                        break;
+                    case "BACK":
+                        tokens.add(new Token(TokenType.BACK, rowNum));
+                        break;
+                    case "UP":
+                        tokens.add(new Token(TokenType.UP, rowNum));
+                        break;
+                    case "DOWN":
+                        tokens.add(new Token(TokenType.DOWN, rowNum));
+                        break;
+                    case "LEFT": tokens.add(new Token(TokenType.LEFT, rowNum));
+                        break;
+                    case "RIGHT": tokens.add(new Token(TokenType.RIGHT, rowNum));
+                        break;
+                    case "REP":
+                        tokens.add(new Token(TokenType.REP, rowNum));
+                        break;
+                    case "\"":
+                        tokens.add(new Token(TokenType.QUOTE, rowNum));
+                        break;
+                    case ".":
+                        tokens.add(new Token(TokenType.PERIOD, rowNum));
+                        break;
+                    case "COLOR":
+                        tokens.add(new Token(TokenType.COLOR, rowNum));
+                        break;
                 }
                 if (m.group().matches("#[A-F0-9]{6}\\s*")) {
                     tokens.add(new Token(TokenType.HEX, rowNum, m.group().trim()));

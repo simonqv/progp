@@ -56,7 +56,12 @@ public class Parser {
      */
     private ParseTree tokenLeaf() {
         // Look ahead to the next token in the sequence.
-        Token token = lexer.nextToken();
+        Token token;
+        if (lexer.hasMoreTokens()){
+            token = lexer.nextToken();
+        } else {
+            return null;
+        }
 
         // Select the corresponding production.
 

@@ -49,8 +49,11 @@ public class Evaluate {
     public ParseTree traverse(ParseTree tree){
         numOfReps = 1;
         ArrayList<Double> oldPosition = new ArrayList<Double>();
+        if (tree == null) {
+            return tree;
+        }
         // If a leaf is found...
-        if (tree.isLeaf()) {
+        if (tree.isLeaf() && foundError == false) {
             // Get the data that is stored in the leaf.
             Object data = tree.getData();
             int d = 0;
