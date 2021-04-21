@@ -18,6 +18,7 @@ public class Lexer {
         Scanner scanner = new Scanner(System.in);
         StringBuilder inputAsString = new StringBuilder();
         String nextLine;
+
         while (scanner.hasNext()) {
             nextLine = scanner.nextLine();
 
@@ -36,7 +37,7 @@ public class Lexer {
       this.tokens = tokens;
     }
 
-    public Lexer() {
+    public Lexer() throws SyntaxError{
         List<String> lines = Lexer.readInput();
         int rowNum = 1;
         tokens = new ArrayList<Token>();
@@ -47,6 +48,7 @@ public class Lexer {
             while (m.find()) {
                 // Check if input contains non-tokens.
                 if (m.start() != position) {
+                    //throw new SyntaxError("Syntaxfel på rad " + rowNum);
                     tokens.add(new Token(TokenType.ERROR, rowNum));
                 }
                 switch (m.group().trim()) {
@@ -87,6 +89,7 @@ public class Lexer {
                 position = m.end();
             }
             if (position != line.length()) {
+                //throw new SyntaxError("Syntaxfel på rad " + rowNum);
                 tokens.add(new Token(TokenType.ERROR, rowNum));
             }
             rowNum++;

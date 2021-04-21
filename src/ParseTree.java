@@ -9,7 +9,7 @@ abstract class ParseTree {
 	abstract public ParseTree getRight();
 	abstract public TokenType getInstruction();
 	abstract public Object getData();
-	abstract public void errorMessage();
+	abstract public String errorMessage();
 }
 
 // Leaf Node class for terminal tokens.
@@ -74,10 +74,10 @@ class LeafNode extends ParseTree {
 	}
 
 	/**
-	 * Print error message.
+	 * Return error message.
 	 */
-	public void errorMessage() {
-        System.out.println("Syntaxfel på rad " + getData());
+    public String errorMessage() {
+        return String.format("Syntaxfel på rad %d", getData());
     }
 }
 
@@ -133,6 +133,5 @@ class BranchNode extends ParseTree {
 		return this.right;
 	}
 
-	public void errorMessage() {}
-
+    public String errorMessage() { return "";}
 }
