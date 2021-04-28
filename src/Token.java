@@ -7,20 +7,28 @@ enum TokenType {
 }
 
 class Token {
-	private TokenType type;
-    private Object data;
-    private int rowNumber;
+	private final TokenType type;
+    private final Object data;
+    private final int rowNumber;
 
-    // Constructor for the tokens: 
-    // UP, DOWN, QUOTE, PERIOD, FORW, BACK, LEFT, RIGHT, COLOR, REP, ERROR.
+
+    /**
+     * Construction for tokens.
+     * @param type UP, DOWN, QUOTE, PERIOD, FORW, BACK, LEFT, RIGHT, COLOR, REP, ERROR.
+     * @param rowNumber row number.
+     */
 	public Token(TokenType type, int rowNumber) {
 		this.type = type;
 		this.rowNumber = rowNumber;
 		this.data = null;
 	}
 
-    // Constructor for the tokens: 
-    // DECIMAL, HEX
+    /**
+     * Construction for the tokens.
+     * @param type DECIMAL, HEX.
+     * @param rowNumber row number.
+     * @param data Token value.
+     */
 	public Token(TokenType type, int rowNumber, Object data) {
 		this.type = type;
 		this.rowNumber = rowNumber;
@@ -53,7 +61,7 @@ class Token {
     
      /**
      * Check if token is an instruction.
-     * @return true or false.
+     * @return true if valid.
      */
     public boolean validInstruction() {
         return type == TokenType.FORW ||

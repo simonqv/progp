@@ -15,20 +15,25 @@ abstract class ParseTree {
 // Leaf Node class for terminal tokens.
 class LeafNode extends ParseTree {
 	TokenType instruction;
-	Object data; 
+	Object data;
 
-	// Constructor for the tokens: 
-    // UP, DOWN.
+    /**
+     * Constructor for tokens.
+     * @param instruction UP, DOWN
+     */
 	public LeafNode(TokenType instruction) {
 		this.instruction = instruction;
 		this.data = null;
 	}
-	
-	// Constructor for the tokens: 
-	// FORW, BACK, LEFT, RIGHT, COLOR, REP, ERROR.
+
+    /**
+     * Constructor for tokens.
+     * @param instruction FORW, BACK, LEFT, RIGHT, COLOR, REP.
+     * @param data HEX or DECIMAL
+     */
 	public LeafNode(TokenType instruction, Object data) {
 		this.instruction = instruction;
-		this.data = data; // Data is HEX or DECIMAL.
+		this.data = data;
 	}
 
 	/**
@@ -60,14 +65,14 @@ class LeafNode extends ParseTree {
 	}
 
 	/**
-	 * Get the left branch, that is null.
+	 * Get the left branch, that is null. Leaf has no left or right.
 	 */
 	public ParseTree getLeft() {
 		return null;
 	}
 
 	/**
-	 * Get the right branch, that is null.
+	 * Get the right branch, that is null. Leaf has no left or right.
 	 */
 	public ParseTree getRight() {
 		return null;
@@ -86,6 +91,11 @@ class BranchNode extends ParseTree {
 	ParseTree left;
 	ParseTree right;
 
+    /**
+     *
+     * @param left left branch or leaf
+     * @param right right branch or leaf
+     */
 	public BranchNode(ParseTree left, ParseTree right) {
 		this.left = left;
 		this.right = right;
@@ -95,18 +105,18 @@ class BranchNode extends ParseTree {
 	 * Print Branch Node.
 	 */
 	public String process() {
-        return "[" + left.process() + " - " + right.process() + "]"; //"[" + left.process() + ";" + right.process() + " ]";
+        return "[" + left.process() + " - " + right.process() + "]";
 	}
 
 	/**
-	 * Get instruction form Branch, that is null.
+	 * Get instruction form Branch, that is null. Branch has no terminal tokens.
 	 */
 	public TokenType getInstruction() {
         return null;
     }
 
 	/**
-	 * Get data form Branch, that is null.
+	 * Get data form Branch, that is null. Branch has no terminal tokens.
 	 */
     public Object getData() {
         return null;

@@ -8,10 +8,10 @@
 * PERIOD, QUOTE
 * DECIMAL
 * HEX
-* ERROR
 
 ### Grammatik i BNF-format
 
+```
 <LEONA> ::= <FORW> | <BACK> | <LEFT> | <RIGHT> | <UP> | <DOWN> | <COLOR> | <REP>
 
 <FORW> ::= "FORW " <DECMIAL> <PERIOD> 
@@ -30,12 +30,11 @@
 
 <REP> ::= "REP " <DECIMAL> <QUOTE> <LEONA> <QUOTE>
 
-<PERIOD> ::= "."
+<PERIOD> ::= "\."
 
-<QUOTE> ::= "(")"
+<QUOTE> ::= "\""
 
 <DECIMAL> ::= "[0-9]+"
 
 <HEX> ::= "(#[0-9A-F]{6})"
-
-<ERROR> ::= 
+```

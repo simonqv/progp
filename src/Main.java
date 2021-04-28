@@ -6,17 +6,21 @@ import java.util.ArrayList;
 
 public class Main {
 
+    // Runs the program.
     public static void main(String[] args) {
 
         try {
-            Lexer sequenceToTokens = new Lexer();
-            Parser parsedTokens = new Parser(sequenceToTokens);
-            ParseTree parseTree = parsedTokens.parse();
-            Evaluate e = new Evaluate(parseTree);
-            e.traverse(parseTree);
-            System.out.println(e.output.toString());
+            // Lexical analysis.
+            Lexer lexer = new Lexer();
+            // Produce syntax tree.
+            ParseTree parseTree = new Parser(lexer).parse();
+            // Evaluate syntax tree.
+            Evaluate evaluate = new Evaluate();
+            evaluate.traverse(parseTree);
+            System.out.println(evaluate.output.toString());
+
         } catch (SyntaxError syntaxError){
-            //syntaxError.printStackTrace();
+            // For any thrown error, print error message.
             System.out.println(syntaxError.getMessage());
         }
     }
