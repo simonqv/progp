@@ -1,4 +1,4 @@
-# INET
+# INET - Programmeringsparadigm
 
 Simon Larspers Qvist    
 Beata Johansson
