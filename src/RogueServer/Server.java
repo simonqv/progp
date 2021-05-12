@@ -7,9 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
-
-
+    public void runServer() throws IOException {
+    //public static void main(String[] args) throws IOException {
         int port = 9999;
         int id = 0;
         ServerSocket serverSocket = new ServerSocket(port);

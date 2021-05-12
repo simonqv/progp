@@ -20,6 +20,8 @@ public class GameBoard {
         }
     }
 
+
+
     public void buildGameMap() {
         // Build all caves.
         addCave(3, 3, 7, 9);    // 7x9
@@ -49,6 +51,29 @@ public class GameBoard {
 
     }
 
+    /**
+     * lägg in pengar och items.
+     */
+    public void populateMap() {
+        // kasta ut allt.
+    }
+
+    /**
+     * Place character on the map.
+     * @param player
+     */
+    public void placePlayer(Player player) {
+        gameMap[player.hPos][player.wPos] = player.getNameString();
+    }
+
+    /**
+     * ändra position på gubbe i
+     */
+    public void movePlayer(Player player, int hOld, int wOld) {
+        gameMap[hOld][wOld] = cave;
+        placePlayer(player);
+    }
+
     public byte[] toByte() {
         // convert to byte!!
         int k = 1;
@@ -62,17 +87,6 @@ public class GameBoard {
             }
         }
         return byteBoard;
-    }
-
-
-
-    /**
-     * Moves character
-     * @param x number representing direction. (1: left, 2: up, 3: right, 4: down)
-     */
-    public void moveCharacter(int x){
-        // if (1 (move) and 1 2 3 4 (left up right down)
-        // do something
     }
 
     /**
