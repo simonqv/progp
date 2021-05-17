@@ -10,13 +10,6 @@ import java.util.Scanner;
 
 public class Client {
 
-    /**
-     * This program demonstrates a simple TCP/IP socket client that reads input
-     * from the user and prints echoed message from the server.
-     *
-     * @author www.codejava.net
-     */
-
         public void runClient() {
 
             String hostname = "localhost";
