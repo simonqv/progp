@@ -2,7 +2,7 @@ package RogueServer;
 
 
 public class Item {
-    enum itemType { NET, FIRSTKEY, SECONDKEY, COINS }
+    enum itemType { NET, FIRSTKEY, SECONDKEY, SNAKE, COINS }
 
     itemType item;
     int quantity;
@@ -18,6 +18,10 @@ public class Item {
         } else {
             System.out.println("Error, not coin");
         }
+    }
+
+    public itemType getItem() {
+        return item;
     }
 
 
