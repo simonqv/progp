@@ -1,5 +1,6 @@
 package RogueServer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +34,18 @@ public class Inventory {
      * The string representation of the inventory to send to client.
      * Format: comma-seperated list of key-value pairs. Like: #.item,#.item,#.item
      */
-    public String stringInventory() {
+    public byte[] byteInventory() {
         StringBuilder sb = new StringBuilder();
         for (Item item : inventory) {
             sb.append(item.toString()).append(",");
         }
         sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
+        // 1.FIRSTKEY,4.COINS
+        byte[] byteInv = sb.toString().getBytes(StandardCharsets.US_ASCII); // len = 4
+        byte[] b = new byte[sb.length() + 2]; // len 6
+        b[0] = 2;
+        System.arraycopy(byteInv, 0, b, 1, byteInv.length);
+        b[b.length - 1] = 0;
+        return b;
     }
 }

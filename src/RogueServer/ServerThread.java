@@ -29,7 +29,6 @@ public class ServerThread extends Thread {
 
                 // Connection
                 int reqCode = input.read();
-                System.out.println(reqCode);
                 if (reqCode == 0) {
                     input.readNBytes(2);
                     // Send code 0, player/client ID, and size of map to Client.
@@ -47,20 +46,27 @@ public class ServerThread extends Thread {
                 spelplaner uppdateras
                  */
                 do {
-                    // Konvertera spelbrädet till byte array
+                    // Convert game map to byteArray.
                     byte[] byteMap = myGame.toByte();
-                    // Skicka spelbrädet till clienten!
+                    // Send the byteArray to the Client.
                     output.write(byteMap);
+
+                    // Convert inventory to byteArray.
+                    if (player.inventory != null) {
+                        byte[] invMap = player.inventory.byteInventory();
+                        // Send the byteArray to the Client.
+                        output.write(invMap);
+                    }
 
                     // code from client for action
                     int code = input.read();
-
                     if (code == 1) {
                         // act is ID and type of action.
                         byte[] act = input.readNBytes(2);
                         player.action(act, myGame);
                     }
-                    byte[] act = null;
+
+
 
                 } while (true);
 

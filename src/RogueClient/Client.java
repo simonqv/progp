@@ -8,33 +8,41 @@ import java.io.*;
 
 
 public class Client {
+    private OutputStream output;
+    private InputStream input;
+    private int id;
+    private BoardGUI boardGUI = null;
 
-        public void runClient() {
 
+    public void runClient() {
             String hostname = "localhost";
             int port = 9999;
 
             try (Socket socket = new Socket(hostname, port)) {
 
                 // Output - send to server
-                OutputStream output = socket.getOutputStream();
+                output = socket.getOutputStream();
 
                 // Input - received from server
-                InputStream input = socket.getInputStream();
+                input = socket.getInputStream();
 
                 // Connect
                 output.write(new byte[]{0, Byte.parseByte("0"), Byte.parseByte("0")});
                 int width = 0;
                 int height = 0;
                 int connectCode = input.read();
-                System.out.println(connectCode);
                 if (connectCode == 0) {
-                    int id = input.read();
+                    id = input.read();
                     width = input.read();
                     height = input.read();
                 } else {
                     System.out.println("Not connected.");
                     System.exit(-2);
+                }
+
+                int code = input.read();
+                if (code == 1) {
+                    boardGUI = new BoardGUI(input, width, height, id);
                 }
 
                 /*
@@ -43,12 +51,16 @@ public class Client {
                 ska skicka actions till servern.
                  */
                 do {
+                    boardGUI.gameWindow(width, height, this);
                     // Read first sign from input. If 1, update board...
-                    int code = input.read();
+                    code = input.read();
                     if (code == 1) {
-                        BoardParser bp = new BoardParser(input, width, height);
-                        bp.printer(width, height);
+                        boardGUI.updateMap(input, width, height);
                     }
+                    if (code == 2) {
+                        boardGUI.updateInventory(input);
+                    }
+
                 } while (true);
 
             } catch (UnknownHostException ex) {
@@ -57,4 +69,9 @@ public class Client {
                 System.out.println("I/O error: " + ex.getMessage());
             }
         }
+
+        public void send(int action) throws IOException {
+            output.write(new byte[]{1, (byte) id, (byte) action});
+        }
+
 }

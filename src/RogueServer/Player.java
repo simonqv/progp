@@ -18,6 +18,7 @@ public class Player {
         this.hPos = 1;
         this.wPos = getStartCoordinates(game, 19);
         inventory = new Inventory();
+        inventory.addItem(new Item(Item.ItemType.COINS, 30));
     }
 
     public String getNameString() {
@@ -51,6 +52,17 @@ public class Player {
         } else if (direction == 4) {
             hPos++;
         }
+        String newPos = game.gameMap[hPos][wPos];
+        if (newPos.matches("[#+\\d]")) {
+            hPos = hOld;
+            wPos = wOld;
+        } else if (newPos.equals(game.coin)) {
+            inventory.addItem(new Item(Item.ItemType.COINS, 1));
+        } else if (newPos.equals(game.firstKey)) {
+            inventory.addItem(new Item(Item.ItemType.FIRSTKEY, 1));
+        } else if (newPos.equals(game.secondKey)) {
+            inventory.addItem(new Item(Item.ItemType.SECONDKEY, 1));
+        }
         game.movePlayer(this, hOld, wOld);
     }
 
@@ -71,14 +83,6 @@ public class Player {
             attack(action, game);
         }
 
-    }
-
-    /**
-     * Calls addItem from Inventory.java to update the players inventory.
-     * @param item to add to the inventory.
-     */
-    public void addToInv(Item item) {
-        inventory.addItem(item);
     }
 
     /**

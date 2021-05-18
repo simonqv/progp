@@ -36,8 +36,6 @@ public class GameBoard {
 
     /**
      * Fill the game map with caves, tunnels and walls.
-     * @param caveSymbol 
-     * @param dirtSymbol
      */
     public void buildGameMap() {
         // Build all caves.
@@ -73,32 +71,33 @@ public class GameBoard {
     /**
      * Place all items on the game board.
      */
-    public void populateMap(int numberOfCoins, String firstKey, String secondKey, int[] firstKeyPosition, int[] secondKeyPosition) {
+    public void populateMap() {
         placeKey(firstKey, firstKeyPosition[0], firstKeyPosition[1]);
         placeKey(secondKey, secondKeyPosition[0], secondKeyPosition[1]);
         placeCoins(numberOfCoins);
     }
 
-   
-    // /**
-    //  * Place character on the map.
-    //  * @param player
-    //  */
-    // public void placePlayer(Player player) {
-    //     gameMap[player.hPos][player.wPos] = player.getNameString();
-    // }
+     /**
+      * Place character on the map.
+      * @param player the player that's going to move.
+      */
+     public void placePlayer(Player player) {
+         gameMap[player.hPos][player.wPos] = player.getNameString();
+     }
 
-    // /**
-    //  * Change the players position on board.
-    //  */
-    // public void movePlayer(Player player, int hOld, int wOld) {
-    //     gameMap[hOld][wOld] = cave;
-    //     placePlayer(player);
-    // } 
+     /**
+      * Change the players position on board.
+      */
+     public void movePlayer(Player player, int hOld, int wOld) {
+         // Set old position to empty.
+         gameMap[hOld][wOld] = cave;
+         // Place the player on the next position.
+         placePlayer(player);
+     }
 
 
     public byte[] toByte() {
-        // convert to byte!!
+        // convert to byte!
         int k = 1;
         byte[] byteBoard = new byte[height * width + 1];
         byteBoard[0] = 1;
@@ -226,13 +225,5 @@ public class GameBoard {
         int index = randomizer.nextInt(upperBound);
         return index;
     }
-
-    // // Main for testing...
-    //  public static void main(String args[]) {
-    //      GameBoard mygame = new GameBoard();
-    //      mygame.buildGameMap();
-    //      mygame.populateMap(mygame.numberOfCoins, mygame.firstKey, mygame.secondKey, mygame.firstKeyPosition, mygame.secondKeyPosition);
-    //      mygame.printMap();
-    //  }
 
 }

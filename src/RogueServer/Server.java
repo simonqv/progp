@@ -16,6 +16,7 @@ public class Server {
         // Initialize board.
         GameBoard myGame = new GameBoard();
         myGame.buildGameMap();
+        myGame.populateMap();
 
         System.out.println("Server.Server is listening on port " + port);
         while (true) {
