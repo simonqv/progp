@@ -17,7 +17,7 @@ public class Player {
         this.name = name;
         this.hPos = 1;
         this.wPos = getStartCoordinates(game, 19);
-
+        inventory = new Inventory();
     }
 
     public String getNameString() {
@@ -37,18 +37,18 @@ public class Player {
 
     /**
      * move codes: 1 = Left, 2 = Up, 3 = Right, 4 = Down.
-     * @param action
+     * @param direction to move.
      */
-    public void move(int action, GameBoard game) {
+    public void move(int direction, GameBoard game) {
         int hOld = hPos;
         int wOld = wPos;
-        if (action == 1) {
+        if (direction == 1) {
             wPos--;
-        } else if (action == 2) {
+        } else if (direction == 2) {
             hPos--;
-        } else if (action == 3) {
+        } else if (direction == 3) {
             wPos++;
-        } else if (action == 4) {
+        } else if (direction == 4) {
             hPos++;
         }
         game.movePlayer(this, hOld, wOld);
@@ -71,9 +71,23 @@ public class Player {
             attack(action, game);
         }
 
-        // 12
-        // 2 ropa på move
-        // Kolla vilken kod.
+    }
+
+    /**
+     * Calls addItem from Inventory.java to update the players inventory.
+     * @param item to add to the inventory.
+     */
+    public void addToInv(Item item) {
+        inventory.addItem(item);
+    }
+
+    /**
+     *
+     * @param item to check if in inventory.
+     * @return true if inventory contains specified item.
+     */
+    public boolean invContains(Item item) {
+        return inventory.inventory.contains(item);
     }
 
     private void attack(int action, GameBoard game) {
