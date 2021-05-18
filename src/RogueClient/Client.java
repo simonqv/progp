@@ -4,8 +4,7 @@ package RogueClient;// Simon Larspers Qvist
 
 import java.net.*;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Scanner;
+
 
 
 public class Client {
@@ -28,7 +27,7 @@ public class Client {
                 int width = 0;
                 int height = 0;
                 int connectCode = input.read();
-
+                System.out.println(connectCode);
                 if (connectCode == 0) {
                     int id = input.read();
                     width = input.read();
@@ -38,6 +37,11 @@ public class Client {
                     System.exit(-2);
                 }
 
+                /*
+                Ska ta emot spelplanen och skriva ut, även när den andra spelaren gjort något, ska ej fastna på att vänta
+                på input från denna spelare...
+                ska skicka actions till servern.
+                 */
                 do {
                     // Read first sign from input. If 1, update board...
                     int code = input.read();
@@ -45,8 +49,6 @@ public class Client {
                         BoardParser bp = new BoardParser(input, width, height);
                         bp.printer(width, height);
                     }
-
-
                 } while (true);
 
             } catch (UnknownHostException ex) {

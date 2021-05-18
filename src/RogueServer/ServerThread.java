@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
  * Handles actions etc.
  */
 public class ServerThread extends Thread {
-        private Socket socket;
-        private int id;
-        private GameBoard myGame;
+        private final Socket socket;
+        private final int id;
+        private final GameBoard myGame;
         private Player player;
 
         public ServerThread(Socket socket, int id, GameBoard myGame) {
@@ -29,18 +29,30 @@ public class ServerThread extends Thread {
 
                 // Connection
                 int reqCode = input.read();
-
+                System.out.println(reqCode);
                 if (reqCode == 0) {
                     input.readNBytes(2);
                     // Send code 0, player/client ID, and size of map to Client.
                     output.write(new byte[]{0, (byte) id, (byte) myGame.getWidth(), (byte) myGame.getHeight()});
+
                 }
 
-                // fixa placePlayer, för olika pos för olika spelare
                 player = new Player(id, myGame);
                 myGame.placePlayer(player);
 
+
+                /*
+                Behöver fixa så att först spelplanen skickas till båda clienterna kontinuerligt.
+                Behöver även lyssna på om den får någon action input från clienten. Får den från ena måste bådas
+                spelplaner uppdateras
+                 */
                 do {
+                    // Konvertera spelbrädet till byte array
+                    byte[] byteMap = myGame.toByte();
+                    // Skicka spelbrädet till clienten!
+                    output.write(byteMap);
+
+                    // code from client for action
                     int code = input.read();
 
                     if (code == 1) {
@@ -50,23 +62,9 @@ public class ServerThread extends Thread {
                     }
                     byte[] act = null;
 
-                    // Konvertera spelbrädet till byte array
-                    byte[] byteMap = myGame.toByte();
-                    // Skicka spelbrädet till clienten!
-                    TimeUnit.SECONDS.sleep(10);
-                    output.write(byteMap);
-
-
-
                 } while (true);
-                /*
-                 text = reader.readLine();
-                    String reverseText = new StringBuilder(text).reverse().toString();
-                    writer.println("Server.Server: " + reverseText);
-                 */
 
-//                socket.close();
-            } catch (IOException | InterruptedException ex) {
+            } catch (IOException ex) {
                 System.out.println("Server.Server exception: " + ex.getMessage());
                 ex.printStackTrace();
             }
