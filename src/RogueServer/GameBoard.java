@@ -2,6 +2,9 @@ package RogueServer;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Random;
+
+import javax.print.attribute.standard.NumberOfDocuments;
 
 public class GameBoard {
     public int width = 50;
@@ -10,8 +13,9 @@ public class GameBoard {
     public String dirt = "#";
     public String cave = " ";
     public String door = "+";
+    public String coin = "*";
 
-    public String[][] cave1;
+    public int numberOfCoins = 50;     
 
     public GameBoard() {
         this.gameMap = new String[height][width];
@@ -22,19 +26,19 @@ public class GameBoard {
 
 
 
-    public void buildGameMap() {
+    public void buildGameMap(String caveSymbol, String dirtSymbol) {
         // Build all caves.
-        addCave(3, 3, 7, 9);    // 7x9
-        addCave(1, 19, 6, 12);  // Start cave 6x12
-        addCave(3, 35, 8, 10);  // 8x10
+        addCave(3, 3, 7, 9, caveSymbol);    // 7x9
+        addCave(1, 19, 6, 12, caveSymbol);  // Start cave 6x12
+        addCave(3, 35, 8, 10, caveSymbol);  // 8x10
 
-        addCave(13, 10, 6, 19); // 6x19
-        addCave(16, 36, 8, 12); // 8x12
-        addCave(22, 20, 6, 5);  // Small cave 6x5
+        addCave(13, 10, 6, 19, caveSymbol); // 6x19
+        addCave(16, 36, 8, 12, caveSymbol); // 8x12
+        addCave(22, 20, 6, 5, caveSymbol);  // Small cave 6x5
 
-        addCave(25, 3, 11, 9);  // 11x9
-        addCave(30, 20, 8, 10); // 8x10
-        addCave(30, 36, 8, 12); // 8x12
+        addCave(25, 3, 11, 9, caveSymbol);  // 11x9
+        addCave(30, 20, 8, 10, caveSymbol); // 8x10
+        addCave(30, 36, 8, 12, caveSymbol); // 8x12
 
         // Build all horizontal tunnels.
         addHorizontalTunnel(5, 13, 6);
@@ -49,30 +53,34 @@ public class GameBoard {
         addVerticalTunnel(20, 22, 2);
         addVerticalTunnel(11, 5, 14);
 
+        // Draw a wall in the cave to the right.
+        addCave(19, 36, 1, 12, dirtSymbol);
     }
 
     /**
-     * lägg in pengar och items.
+     * Place items on game board.
      */
-    public void populateMap() {
-        // kasta ut allt.
+    public void populateMap(int numberOfCoins) {
+        placeCoins(numberOfCoins);
     }
 
-    /**
-     * Place character on the map.
-     * @param player
-     */
-    public void placePlayer(Player player) {
-        gameMap[player.hPos][player.wPos] = player.getNameString();
-    }
+   
+    // /**
+    //  * Place character on the map.
+    //  * @param player
+    //  */
+    // public void placePlayer(Player player) {
+    //     gameMap[player.hPos][player.wPos] = player.getNameString();
+    // }
 
-    /**
-     * ändra position på gubbe i
-     */
-    public void movePlayer(Player player, int hOld, int wOld) {
-        gameMap[hOld][wOld] = cave;
-        placePlayer(player);
-    }
+    // /**
+    //  * Change the players position on board.
+    //  */
+    // public void movePlayer(Player player, int hOld, int wOld) {
+    //     gameMap[hOld][wOld] = cave;
+    //     placePlayer(player);
+    // } 
+
 
     public byte[] toByte() {
         // convert to byte!!
@@ -96,16 +104,27 @@ public class GameBoard {
         // Remove monster!
     }
 
-
-
-    public void addCave(int rowPosition, int colPosition, int rowSize, int colSize) {
+    /**
+     * Draw cave on game board based on specified coordinates and cave size.
+     * @param rowPosition
+     * @param colPosition
+     * @param rowSize
+     * @param colSize
+     */
+    public void addCave(int rowPosition, int colPosition, int rowSize, int colSize, String caveSymbol) {
         for(int row = rowPosition; row < rowPosition+rowSize; row++) {
             for(int col = colPosition; col < colPosition+colSize; col++) {
-                gameMap[row][col] = cave;
+                gameMap[row][col] = caveSymbol;
             }
         }
     }
 
+    /**
+     * Draw a horizontal tunnel on game board.
+     * @param rowPosition
+     * @param colPosition
+     * @param length
+     */
     public void addHorizontalTunnel(int rowPosition, int colPosition, int length) {
         gameMap[rowPosition][colPosition-1] = door;
         for(int col = colPosition; col < colPosition+length; col++) {
@@ -114,6 +133,12 @@ public class GameBoard {
         gameMap[rowPosition][colPosition+length-1] = door;
     }
 
+    /**
+     * Draw a vertical tunnel on game board.
+     * @param rowPosition
+     * @param colPosition
+     * @param length
+     */
     public void addVerticalTunnel(int rowPosition, int colPosition, int length) {
         gameMap[rowPosition-1][colPosition] = door;
         for(int row = rowPosition; row < rowPosition+length; row++) {
@@ -132,33 +157,57 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Get the witdth of board.
+     * @return width.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Get the height of board.
+     * @return height.
+     */
     public int getHeight() {
         return height;
     }
 
-    // public void addCaveToMap(String[] cave, String[][] map) {
-    //     for
-    // }
+    /**
+     * Place all coins on game board.
+     * @param numberOfCoins
+     */
+    public void placeCoins(int numberOfCoins){
+        int num = numberOfCoins;
+        int row;
+        int col;
+        while(num != 0) {
+            row = generateRandomIndex(getHeight());
+            col = generateRandomIndex(getWidth());
+            if(gameMap[row][col] == " ") {
+                gameMap[row][col] = coin;
+                num--;
+            }
+        }
+    }
 
-  //  public static void main(String args[]) {
-  //      GameBoard myGame = new GameBoard();
-  //      myGame.buildGameMap();
-  //      myGame.printMap();
-  //  }
+    /**
+     * Generates a random index between lower bound 0 and the upper bound.
+     * @param upperBound
+     * @return index
+     */
+    public int generateRandomIndex(int upperBound) {
+        Random randomizer = new Random();
+        int index = randomizer.nextInt(upperBound);
+        return index;
+    }
 
-    // public String[] cave1 = new String[5][5];
-    // public String[] cave2 = new String[6][15];
-    // public String[] cave3 = new String[6][15];
-    // public String[] cave4 = new String[6][10];
-    // public String[] cave5 = new String[7][20];
-    // public String[] cave6 = new String[10][7];
-    // public String[] cave7 = new String[5][5];
-    // public String[] cave8 = new String[7][5];
-    // public String[] cave9 = new String[5][5];
 
+    public static void main(String args[]) {
+        GameBoard mygame = new GameBoard();
+        mygame.buildGameMap(mygame.cave, mygame.dirt);
+        mygame.populateMap(mygame.numberOfCoins);
+        mygame.printMap();
+    }
 
 }
