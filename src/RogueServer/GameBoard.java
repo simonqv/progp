@@ -10,13 +10,23 @@ public class GameBoard {
     public int width = 50;
     public int height = 40;
     public String[][] gameMap;
+
     public String dirt = "#";
     public String cave = " ";
     public String door = "+";
     public String coin = "*";
 
-    public int numberOfCoins = 50;     
+    public String firstKey = "?";
+    public String secondKey = "!";
+    int[] firstKeyPosition = new int[]{26,22};
+    int[] secondKeyPosition = new int[]{22,46};
 
+    public int numberOfCoins = 50;  
+   
+
+    /**
+     * Create a new game board.
+     */
     public GameBoard() {
         this.gameMap = new String[height][width];
         for (String[] row : gameMap) {
@@ -24,8 +34,11 @@ public class GameBoard {
         }
     }
 
-
-
+    /**
+     * Fill the game map with caves, tunnels and walls.
+     * @param caveSymbol 
+     * @param dirtSymbol
+     */
     public void buildGameMap(String caveSymbol, String dirtSymbol) {
         // Build all caves.
         addCave(3, 3, 7, 9, caveSymbol);    // 7x9
@@ -58,9 +71,11 @@ public class GameBoard {
     }
 
     /**
-     * Place items on game board.
+     * Place all items on the game board.
      */
-    public void populateMap(int numberOfCoins) {
+    public void populateMap(int numberOfCoins, String firstKey, String secondKey, int[] firstKeyPosition, int[] secondKeyPosition) {
+        placeKey(firstKey, firstKeyPosition[0], firstKeyPosition[1]);
+        placeKey(secondKey, secondKeyPosition[0], secondKeyPosition[1]);
         placeCoins(numberOfCoins);
     }
 
@@ -192,6 +207,16 @@ public class GameBoard {
     }
 
     /**
+     * Add a key to game board.
+     * @param key
+     * @param row
+     * @param col
+     */
+    public void placeKey(String key, int row, int col) {
+        gameMap[row][col] = key;
+    }
+
+    /**
      * Generates a random index between lower bound 0 and the upper bound.
      * @param upperBound
      * @return index
@@ -202,12 +227,12 @@ public class GameBoard {
         return index;
     }
 
-
-    public static void main(String args[]) {
-        GameBoard mygame = new GameBoard();
-        mygame.buildGameMap(mygame.cave, mygame.dirt);
-        mygame.populateMap(mygame.numberOfCoins);
-        mygame.printMap();
-    }
+    // Main for testing...
+    // public static void main(String args[]) {
+    //     GameBoard mygame = new GameBoard();
+    //     mygame.buildGameMap(mygame.cave, mygame.dirt);
+    //     mygame.populateMap(mygame.numberOfCoins, mygame.firstKey, mygame.secondKey, mygame.firstKeyPosition, mygame.secondKeyPosition);
+    //     mygame.printMap();
+    // }
 
 }
