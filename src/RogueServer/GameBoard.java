@@ -39,19 +39,19 @@ public class GameBoard {
      * @param caveSymbol 
      * @param dirtSymbol
      */
-    public void buildGameMap(String caveSymbol, String dirtSymbol) {
+    public void buildGameMap() {
         // Build all caves.
-        addCave(3, 3, 7, 9, caveSymbol);    // 7x9
-        addCave(1, 19, 6, 12, caveSymbol);  // Start cave 6x12
-        addCave(3, 35, 8, 10, caveSymbol);  // 8x10
+        addCave(3, 3, 7, 9, cave);    // 7x9
+        addCave(1, 19, 6, 12, cave);  // Start cave 6x12
+        addCave(3, 35, 8, 10, cave);  // 8x10
 
-        addCave(13, 10, 6, 19, caveSymbol); // 6x19
-        addCave(16, 36, 8, 12, caveSymbol); // 8x12
-        addCave(22, 20, 6, 5, caveSymbol);  // Small cave 6x5
+        addCave(13, 10, 6, 19, cave); // 6x19
+        addCave(16, 36, 8, 12, cave); // 8x12
+        addCave(22, 20, 6, 5, cave);  // Small cave 6x5
 
-        addCave(25, 3, 11, 9, caveSymbol);  // 11x9
-        addCave(30, 20, 8, 10, caveSymbol); // 8x10
-        addCave(30, 36, 8, 12, caveSymbol); // 8x12
+        addCave(25, 3, 11, 9, cave);  // 11x9
+        addCave(30, 20, 8, 10, cave); // 8x10
+        addCave(30, 36, 8, 12, cave); // 8x12
 
         // Build all horizontal tunnels.
         addHorizontalTunnel(5, 13, 6);
@@ -67,7 +67,7 @@ public class GameBoard {
         addVerticalTunnel(11, 5, 14);
 
         // Draw a wall in the cave to the right.
-        addCave(19, 36, 1, 12, dirtSymbol);
+        addCave(19, 36, 1, 12, dirt);
     }
 
     /**
@@ -227,12 +227,12 @@ public class GameBoard {
         return index;
     }
 
-    // Main for testing...
-    // public static void main(String args[]) {
-    //     GameBoard mygame = new GameBoard();
-    //     mygame.buildGameMap(mygame.cave, mygame.dirt);
-    //     mygame.populateMap(mygame.numberOfCoins, mygame.firstKey, mygame.secondKey, mygame.firstKeyPosition, mygame.secondKeyPosition);
-    //     mygame.printMap();
-    // }
+    // // Main for testing...
+    //  public static void main(String args[]) {
+    //      GameBoard mygame = new GameBoard();
+    //      mygame.buildGameMap();
+    //      mygame.populateMap(mygame.numberOfCoins, mygame.firstKey, mygame.secondKey, mygame.firstKeyPosition, mygame.secondKeyPosition);
+    //      mygame.printMap();
+    //  }
 
 }
