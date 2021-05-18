@@ -58,16 +58,18 @@ public class BoardGUI {
     private String invToString(InputStream input) throws IOException {
         StringBuilder sb = new StringBuilder();
 
+        while (true) {
+            int b = input.read();
+            if (b == 0) break;
 
-        // Hur ska vi läsa hela grejen????
-        // Denna läser 3?? varför??
+            sb.append((char) b);
+        }
 
-        int x = input.read();
-        System.out.println(x);
+        System.out.println(sb.toString());
 
         // detta skickades. Översätt nu.
         // String s = "4.COINS,1.FIRSTKEY";
         // [x][y][i]....
-        return null;
+        return sb.toString();
     }
 }

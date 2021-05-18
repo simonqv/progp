@@ -2,7 +2,7 @@ package RogueServer;
 
 
 public class Item {
-    enum ItemType { NET, FIRSTKEY, SECONDKEY, COINS }
+    enum ItemType { NET, FIRST_KEY, SECOND_KEY, COINS }
 
     ItemType item;
     int quantity;
@@ -15,6 +15,7 @@ public class Item {
     /**
      * Increases the quantity of coins.
      */
+    // TODO: Generalize
     public void pickupCoin() {
         if (item == ItemType.COINS) {
             quantity++;

@@ -1,36 +1,38 @@
 package RogueServer;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
-
-import javax.print.attribute.standard.NumberOfDocuments;
 
 public class GameBoard {
     public int width = 50;
     public int height = 40;
-    public String[][] gameMap;
+    public char[][] gameMap;
 
-    public String dirt = "#";
-    public String cave = " ";
-    public String door = "+";
-    public String coin = "*";
+    public static final char DIRT = '#';
+    public static final char CAVE = ' ';
+    public static final char DOOR = '+';
+    public static final char COIN = '*';
 
-    public String firstKey = "?";
-    public String secondKey = "!";
+    public static final char FIRST_KEY = '?';
+    public static final char SECOND_KEY = '!';
+
     int[] firstKeyPosition = new int[]{26,22};
     int[] secondKeyPosition = new int[]{22,46};
 
     public int numberOfCoins = 50;  
-   
+
+    private final List<GameBoardListener> listeners;
 
     /**
      * Create a new game board.
+     * @param listeners
      */
-    public GameBoard() {
-        this.gameMap = new String[height][width];
-        for (String[] row : gameMap) {
-            Arrays.fill(row, dirt);
+    public GameBoard(List<GameBoardListener> listeners) {
+        this.listeners = listeners;
+        this.gameMap = new char[height][width];
+        for (char[] row : gameMap) {
+            Arrays.fill(row, DIRT);
         }
     }
 
@@ -39,17 +41,17 @@ public class GameBoard {
      */
     public void buildGameMap() {
         // Build all caves.
-        addCave(3, 3, 7, 9, cave);    // 7x9
-        addCave(1, 19, 6, 12, cave);  // Start cave 6x12
-        addCave(3, 35, 8, 10, cave);  // 8x10
+        addCave(3, 3, 7, 9, CAVE);    // 7x9
+        addCave(1, 19, 6, 12, CAVE);  // Start cave 6x12
+        addCave(3, 35, 8, 10, CAVE);  // 8x10
 
-        addCave(13, 10, 6, 19, cave); // 6x19
-        addCave(16, 36, 8, 12, cave); // 8x12
-        addCave(22, 20, 6, 5, cave);  // Small cave 6x5
+        addCave(13, 10, 6, 19, CAVE); // 6x19
+        addCave(16, 36, 8, 12, CAVE); // 8x12
+        addCave(22, 20, 6, 5, CAVE);  // Small cave 6x5
 
-        addCave(25, 3, 11, 9, cave);  // 11x9
-        addCave(30, 20, 8, 10, cave); // 8x10
-        addCave(30, 36, 8, 12, cave); // 8x12
+        addCave(25, 3, 11, 9, CAVE);  // 11x9
+        addCave(30, 20, 8, 10, CAVE); // 8x10
+        addCave(30, 36, 8, 12, CAVE); // 8x12
 
         // Build all horizontal tunnels.
         addHorizontalTunnel(5, 13, 6);
@@ -65,15 +67,15 @@ public class GameBoard {
         addVerticalTunnel(11, 5, 14);
 
         // Draw a wall in the cave to the right.
-        addCave(19, 36, 1, 12, dirt);
+        addCave(19, 36, 1, 12, DIRT);
     }
 
     /**
      * Place all items on the game board.
      */
     public void populateMap() {
-        placeKey(firstKey, firstKeyPosition[0], firstKeyPosition[1]);
-        placeKey(secondKey, secondKeyPosition[0], secondKeyPosition[1]);
+        placeKey(FIRST_KEY, firstKeyPosition[0], firstKeyPosition[1]);
+        placeKey(SECOND_KEY, secondKeyPosition[0], secondKeyPosition[1]);
         placeCoins(numberOfCoins);
     }
 
@@ -83,6 +85,9 @@ public class GameBoard {
       */
      public void placePlayer(Player player) {
          gameMap[player.hPos][player.wPos] = player.getNameString();
+
+         // Notify all listeners of the changed game board
+         listeners.forEach(GameBoardListener::boardChanged);
      }
 
      /**
@@ -90,7 +95,7 @@ public class GameBoard {
       */
      public void movePlayer(Player player, int hOld, int wOld) {
          // Set old position to empty.
-         gameMap[hOld][wOld] = cave;
+         gameMap[hOld][wOld] = CAVE;
          // Place the player on the next position.
          placePlayer(player);
      }
@@ -98,13 +103,11 @@ public class GameBoard {
 
     public byte[] toByte() {
         // convert to byte!
-        int k = 1;
-        byte[] byteBoard = new byte[height * width + 1];
-        byteBoard[0] = 1;
+        int k = 0;
+        byte[] byteBoard = new byte[height * width];
         for (int i = 0; i < height; i++){
             for (int j = 0; j < width; j++) {
-                byte[] b = gameMap[i][j].getBytes(StandardCharsets.US_ASCII);
-                byteBoard[k] = b[0];
+                byteBoard[k] = (byte) gameMap[i][j];
                 k ++;
             }
         }
@@ -125,7 +128,7 @@ public class GameBoard {
      * @param rowSize
      * @param colSize
      */
-    public void addCave(int rowPosition, int colPosition, int rowSize, int colSize, String caveSymbol) {
+    public void addCave(int rowPosition, int colPosition, int rowSize, int colSize, char caveSymbol) {
         for(int row = rowPosition; row < rowPosition+rowSize; row++) {
             for(int col = colPosition; col < colPosition+colSize; col++) {
                 gameMap[row][col] = caveSymbol;
@@ -140,11 +143,11 @@ public class GameBoard {
      * @param length
      */
     public void addHorizontalTunnel(int rowPosition, int colPosition, int length) {
-        gameMap[rowPosition][colPosition-1] = door;
+        gameMap[rowPosition][colPosition-1] = DOOR;
         for(int col = colPosition; col < colPosition+length; col++) {
-            gameMap[rowPosition][col] = " ";
+            gameMap[rowPosition][col] = CAVE;
         }
-        gameMap[rowPosition][colPosition+length-1] = door;
+        gameMap[rowPosition][colPosition+length-1] = DOOR;
     }
 
     /**
@@ -154,17 +157,17 @@ public class GameBoard {
      * @param length
      */
     public void addVerticalTunnel(int rowPosition, int colPosition, int length) {
-        gameMap[rowPosition-1][colPosition] = door;
+        gameMap[rowPosition-1][colPosition] = DOOR;
         for(int row = rowPosition; row < rowPosition+length; row++) {
-            gameMap[row][colPosition] = " ";
+            gameMap[row][colPosition] = CAVE;
         }
-        gameMap[rowPosition+length-1][colPosition] = door;
+        gameMap[rowPosition+length-1][colPosition] = DOOR;
     }
 
     public void printMap() {
-        for(String[] row : gameMap) {
-            for( int i = 0; i < row.length; i++) {
-                System.out.print(row[i]);
+        for(char[] row : gameMap) {
+            for (char c : row) {
+                System.out.print(c);
                 System.out.print(" ");
             }
             System.out.println();
@@ -198,8 +201,8 @@ public class GameBoard {
         while(num != 0) {
             row = generateRandomIndex(getHeight());
             col = generateRandomIndex(getWidth());
-            if(gameMap[row][col] == " ") {
-                gameMap[row][col] = coin;
+            if(gameMap[row][col] == CAVE) {
+                gameMap[row][col] = COIN;
                 num--;
             }
         }
@@ -211,7 +214,7 @@ public class GameBoard {
      * @param row
      * @param col
      */
-    public void placeKey(String key, int row, int col) {
+    public void placeKey(char key, int row, int col) {
         gameMap[row][col] = key;
     }
 

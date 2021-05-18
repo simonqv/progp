@@ -3,10 +3,6 @@ package RogueServer;
 // Beata Johansson
 // INET 2021
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class Player {
     int name;
     int wPos;
@@ -21,14 +17,14 @@ public class Player {
         inventory.addItem(new Item(Item.ItemType.COINS, 30));
     }
 
-    public String getNameString() {
-        return String.valueOf(name);
+    public char getNameString() {
+        return String.valueOf(name).charAt(0);
     }
 
     public int getStartCoordinates(GameBoard game, int wGuess) {
         int w = wGuess;
         while (true) {
-            if (game.gameMap[hPos][w].equals(" ")) {
+            if (game.gameMap[hPos][w] == ' ') {
                 return w;
             } else {
                 w++;
@@ -52,16 +48,17 @@ public class Player {
         } else if (direction == 4) {
             hPos++;
         }
-        String newPos = game.gameMap[hPos][wPos];
-        if (newPos.matches("[#+\\d]")) {
+
+        char newPos = game.gameMap[hPos][wPos];
+        if (String.valueOf(newPos).matches("[#+\\d]")) {
             hPos = hOld;
             wPos = wOld;
-        } else if (newPos.equals(game.coin)) {
+        } else if (newPos == GameBoard.COIN) {
             inventory.addItem(new Item(Item.ItemType.COINS, 1));
-        } else if (newPos.equals(game.firstKey)) {
-            inventory.addItem(new Item(Item.ItemType.FIRSTKEY, 1));
-        } else if (newPos.equals(game.secondKey)) {
-            inventory.addItem(new Item(Item.ItemType.SECONDKEY, 1));
+        } else if (newPos == GameBoard.FIRST_KEY) {
+            inventory.addItem(new Item(Item.ItemType.FIRST_KEY, 1));
+        } else if (newPos == GameBoard.SECOND_KEY) {
+            inventory.addItem(new Item(Item.ItemType.SECOND_KEY, 1));
         }
         game.movePlayer(this, hOld, wOld);
     }
@@ -91,7 +88,7 @@ public class Player {
      * @return true if inventory contains specified item.
      */
     public boolean invContains(Item item) {
-        return inventory.inventory.contains(item);
+        return inventory.getItems().contains(item);
     }
 
     private void attack(int action, GameBoard game) {
