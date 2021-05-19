@@ -14,7 +14,7 @@ public class Player {
         this.hPos = 1;
         this.wPos = getStartCoordinates(game, 19);
         inventory = new Inventory();
-        inventory.addItem(new Item(Item.ItemType.COINS, 30));
+        inventory.addItem(new Item(Item.ItemType.COINS, 0));
     }
 
     public char getNameString() {
@@ -54,7 +54,11 @@ public class Player {
             hPos = hOld;
             wPos = wOld;
         } else if (newPos == GameBoard.COIN) {
-            inventory.addItem(new Item(Item.ItemType.COINS, 1));
+            for (Item item : inventory.getItems()) {
+                if (item.getItem() == Item.ItemType.COINS) {
+                    item.pickupCoin();
+                }
+            }
         } else if (newPos == GameBoard.FIRST_KEY) {
             inventory.addItem(new Item(Item.ItemType.FIRST_KEY, 1));
         } else if (newPos == GameBoard.SECOND_KEY) {
@@ -82,14 +86,7 @@ public class Player {
 
     }
 
-    /**
-     *
-     * @param item to check if in inventory.
-     * @return true if inventory contains specified item.
-     */
-    public boolean invContains(Item item) {
-        return inventory.getItems().contains(item);
-    }
+
 
     private void attack(int action, GameBoard game) {
     }

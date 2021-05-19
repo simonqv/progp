@@ -7,6 +7,8 @@ public class CommandConstants {
     // From server to client
     public static final byte BOARD = 10;
     public static final byte INVENTORY = 11;
+    public static final byte WINNER = 12;
+    public static final byte MESSAGE = 13;
 
     // From client to server
     public static final byte ACTION = 20;

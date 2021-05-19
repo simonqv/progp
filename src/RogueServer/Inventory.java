@@ -15,13 +15,16 @@ public class Inventory {
      * @param item to add.
      */
     public void addItem(Item item) {
+
         if (item.getItem() == Item.ItemType.COINS) {
-            if (items.contains(item)) {
-                int ind = items.indexOf(item);
-                items.get(ind).pickupCoin();
+
+            if (exists(item)) {
+                System.out.println("hej");
+                item.pickupCoin();
             } else {
                 items.add(item);
             }
+
         } else if (item.getItem() == Item.ItemType.FIRST_KEY || item.getItem() == Item.ItemType.SECOND_KEY) {
             items.add(item);
         } else {
@@ -29,7 +32,15 @@ public class Inventory {
         }
     }
 
+    private boolean exists(Item item) {
+        return items.stream().anyMatch(o -> o.getItem().equals(item.getItem()));
+    }
+
     public List<Item> getItems() {
         return items;
+    }
+
+    public void increaseItem() {
+
     }
 }
