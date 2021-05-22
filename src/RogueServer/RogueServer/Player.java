@@ -59,9 +59,9 @@ public class Player {
                     item.pickupCoin();
                 }
             }
-        } else if (newPos == GameBoard.FIRST_KEY) {
+        } else if (newPos == GameBoard.FIRSTKEY) {
             inventory.addItem(new Item(Item.ItemType.FIRST_KEY, 1));
-        } else if (newPos == GameBoard.SECOND_KEY) {
+        } else if (newPos == GameBoard.SECONDKEY) {
             inventory.addItem(new Item(Item.ItemType.SECOND_KEY, 1));
         }
         game.movePlayer(this, hOld, wOld);
@@ -85,8 +85,6 @@ public class Player {
         }
 
     }
-
-
 
     private void attack(int action, GameBoard game) {
     }

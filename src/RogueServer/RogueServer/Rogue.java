@@ -3,7 +3,6 @@
 // INET 2021
 package RogueServer;
 
-
 public class Rogue {
     private String[][] gameMap;
     private Player player;

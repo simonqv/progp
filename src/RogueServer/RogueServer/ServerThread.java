@@ -103,6 +103,15 @@ public class ServerThread extends Thread implements GameBoardListener {
         output.write(byteMap);
     }
 
+    private void sendWinner(OutputStream output) throws IOException {
+        // Send the winner based on amount of collected coins in inventory
+        String m = "VINST!";
+        byte[] byteString = m.getBytes();
+        // Send the byteArray to the Client.
+        output.write(CommandConstants.WINNER);
+        output.write(byteString);
+    }
+
     @Override
     public void boardChanged() {
         try {
@@ -111,6 +120,16 @@ public class ServerThread extends Thread implements GameBoardListener {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void winner() {
+        try {
+            sendWinner(output);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 

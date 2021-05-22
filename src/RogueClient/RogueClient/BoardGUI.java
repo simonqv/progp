@@ -15,7 +15,6 @@ public class BoardGUI {
         this.frame = new JFrame("Game Board " + id);
         frame.setSize(2000, 1500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
 
     public void updateMap(InputStream inputStream, int w, int h) throws IOException {
@@ -23,14 +22,13 @@ public class BoardGUI {
     }
 
     public void gameWindow(int w, int h, Client client) {
-        JTextArea board = new JTextArea(2000, 1500);
+        JTextArea board = new JTextArea(); 
         board.setFont(new Font("monospaced", Font.PLAIN, 12));
         board.setText(boardToString(w, h));
-
         board.addKeyListener(new CustomKeyListener(client));
-
         frame.add(board);
         frame.setVisible(true);
+        frame.pack();
     }
 
     private String boardToString(int w, int h) {
@@ -52,7 +50,7 @@ public class BoardGUI {
     public void updateInventory(InputStream input) throws IOException {
         JTextArea inventory = new JTextArea();
         inventory.setText(invToString(input));
-
+        frame.add(inventory, BorderLayout.PAGE_END);
     }
 
     private String invToString(InputStream input) throws IOException {
@@ -61,15 +59,18 @@ public class BoardGUI {
         while (true) {
             int b = input.read();
             if (b == 0) break;
-
             sb.append((char) b);
         }
-
         System.out.println(sb.toString());
-
-        // detta skickades. Översätt nu.
-        // String s = "4.COINS,1.FIRSTKEY";
-        // [x][y][i]....
         return sb.toString();
     }
+
+    public void displayMessage(InputStream input) throws IOException {
+        frame.getContentPane().removeAll();
+        JTextArea messageScreen = new JTextArea();
+        messageScreen.setText(input.readNBytes(10).toString());
+        frame.add(messageScreen, BorderLayout.CENTER);
+        frame.validate();
+    }
+
 }

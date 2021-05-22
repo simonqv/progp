@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import RogueServer.Item.ItemType;
+
 public class GameBoard {
     public int width = 50;
     public int height = 40;
@@ -13,17 +15,22 @@ public class GameBoard {
     public static final char CAVE = ' ';
     public static final char DOOR = '+';
     public static final char COIN = '*';
+    public static final char BUTTON = 'B';
 
-    public static final char FIRST_KEY = '?';
-    public static final char SECOND_KEY = '!';
+    public static final char FIRSTKEY = '?';
+    public static final char SECONDKEY = '!';
 
     int[] firstKeyPosition = new int[]{26,22};
     int[] secondKeyPosition = new int[]{22,46};
+    int[] buttonDoor = new int[]{11,40};
+    int[] firstKeyDoor = new int[]{5,18};
+    int[] secondKeyDoor = new int[]{38,24};
 
+    int[][] doorPositions = new int[][]{buttonDoor, firstKeyDoor, secondKeyDoor}; // 3 doors...
     public int numberOfCoins = 50;  
 
     private final List<GameBoardListener> listeners;
-
+    
     /**
      * Create a new game board.
      * @param listeners
@@ -65,17 +72,30 @@ public class GameBoard {
         addVerticalTunnel(25, 40, 5);
         addVerticalTunnel(20, 22, 2);
         addVerticalTunnel(11, 5, 14);
+        addVerticalTunnel(38, 24, 2);
 
         // Draw a wall in the cave to the right.
         addCave(19, 36, 1, 12, DIRT);
+
+        addDoors();
+    }
+
+    public void addDoors() {
+        for(int[] doorPosition : doorPositions) {
+            gameMap[doorPosition[0]][doorPosition[1]] = DOOR;
+            if (doorPosition[0] == buttonDoor[0] && doorPosition[1] == buttonDoor[1]){
+                gameMap[doorPosition[0]-1][doorPosition[1]-1] = BUTTON;
+                gameMap[doorPosition[0]-1][doorPosition[1]+1] = BUTTON;
+            }
+        }
     }
 
     /**
      * Place all items on the game board.
      */
     public void populateMap() {
-        placeKey(FIRST_KEY, firstKeyPosition[0], firstKeyPosition[1]);
-        placeKey(SECOND_KEY, secondKeyPosition[0], secondKeyPosition[1]);
+        placeKey(FIRSTKEY, firstKeyPosition[0], firstKeyPosition[1]);
+        placeKey(SECONDKEY, secondKeyPosition[0], secondKeyPosition[1]);
         placeCoins(numberOfCoins);
     }
 
@@ -85,7 +105,20 @@ public class GameBoard {
       */
      public void placePlayer(Player player) {
          gameMap[player.hPos][player.wPos] = player.getNameString();
-
+        
+         if (buttonsArePressed()) {
+            // Unlock button-door
+            unlockDoor(buttonDoor);
+         } else if(player.inventory.exists(new Item(ItemType.FIRST_KEY, 0)) && player.hPos == firstKeyDoor[0] && player.wPos == firstKeyDoor[1]+1){
+            // Unlock door with the first key
+            unlockDoor(firstKeyDoor);
+         } else if(player.inventory.exists(new Item(ItemType.SECOND_KEY, 0)) && player.hPos == secondKeyDoor[0]-1 && player.wPos == secondKeyDoor[1]){
+            // Unlock door with the second key
+            unlockDoor(secondKeyDoor);
+            // It is a win!
+            listeners.forEach(GameBoardListener::boardChanged);
+            listeners.forEach(GameBoardListener::winner);
+         }
          // Notify all listeners of the changed game board
          listeners.forEach(GameBoardListener::boardChanged);
      }
@@ -95,9 +128,22 @@ public class GameBoard {
       */
      public void movePlayer(Player player, int hOld, int wOld) {
          // Set old position to empty.
-         gameMap[hOld][wOld] = CAVE;
+         if (hOld == buttonDoor[0]-1 && wOld == buttonDoor[1]-1 || hOld == buttonDoor[0]-1 && wOld == buttonDoor[1]+1){
+            gameMap[hOld][wOld] = BUTTON;
+         }
+         else{
+            gameMap[hOld][wOld] = CAVE;
+         }        
          // Place the player on the next position.
          placePlayer(player);
+     }
+
+     public boolean buttonsArePressed() {
+         return gameMap[buttonDoor[0]-1][buttonDoor[1]-1] != BUTTON && gameMap[buttonDoor[0]-1][buttonDoor[1]+1] != BUTTON;
+     }
+
+     public void unlockDoor(int[] door) {
+        gameMap[door[0]][door[1]] = CAVE;
      }
 
 
@@ -143,11 +189,9 @@ public class GameBoard {
      * @param length
      */
     public void addHorizontalTunnel(int rowPosition, int colPosition, int length) {
-        gameMap[rowPosition][colPosition-1] = DOOR;
-        for(int col = colPosition; col < colPosition+length; col++) {
+        for(int col = colPosition-1; col < colPosition+length; col++) {
             gameMap[rowPosition][col] = CAVE;
         }
-        gameMap[rowPosition][colPosition+length-1] = DOOR;
     }
 
     /**
@@ -157,11 +201,9 @@ public class GameBoard {
      * @param length
      */
     public void addVerticalTunnel(int rowPosition, int colPosition, int length) {
-        gameMap[rowPosition-1][colPosition] = DOOR;
-        for(int row = rowPosition; row < rowPosition+length; row++) {
+        for(int row = rowPosition-1; row < rowPosition+length; row++) {
             gameMap[row][colPosition] = CAVE;
         }
-        gameMap[rowPosition+length-1][colPosition] = DOOR;
     }
 
     public void printMap() {

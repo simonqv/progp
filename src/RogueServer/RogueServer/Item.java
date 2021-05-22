@@ -15,7 +15,6 @@ public class Item {
     /**
      * Increases the quantity of coins.
      */
-    // TODO: Generalize
     public void pickupCoin() {
         System.out.println("in item....");
         if (item == ItemType.COINS) {
