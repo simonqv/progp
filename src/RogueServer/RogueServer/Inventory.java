@@ -19,7 +19,6 @@ public class Inventory {
         if (item.getItem() == Item.ItemType.COINS) {
 
             if (exists(item)) {
-                System.out.println("hej");
                 item.pickupCoin();
             } else {
                 items.add(item);

@@ -30,7 +30,7 @@ public class GameBoard {
     public int numberOfCoins = 50;  
 
     private final List<GameBoardListener> listeners;
-    
+
     /**
      * Create a new game board.
      * @param listeners
@@ -158,13 +158,6 @@ public class GameBoard {
             }
         }
         return byteBoard;
-    }
-
-    /**
-     *
-     */
-    public void defeatMonster() {
-        // Remove monster!
     }
 
     /**

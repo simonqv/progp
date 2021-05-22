@@ -105,11 +105,12 @@ public class ServerThread extends Thread implements GameBoardListener {
 
     private void sendWinner(OutputStream output) throws IOException {
         // Send the winner based on amount of collected coins in inventory
-        String m = "VINST!";
+        String m = "SPELET AR SLUT!";
         byte[] byteString = m.getBytes();
         // Send the byteArray to the Client.
         output.write(CommandConstants.WINNER);
         output.write(byteString);
+        output.write(0);
     }
 
     @Override

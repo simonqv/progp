@@ -56,7 +56,6 @@ public class Client {
                 
                 // Read first sign from input. If 1, update board...
                 code = input.read();
-                System.out.println(code);
 
                 switch (code) {
                     case CommandConstants.BOARD -> boardGUI.updateMap(input, width, height);

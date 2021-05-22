@@ -16,12 +16,8 @@ public class Item {
      * Increases the quantity of coins.
      */
     public void pickupCoin() {
-        System.out.println("in item....");
         if (item == ItemType.COINS) {
-            System.out.println("in pickup");
-            System.out.println(quantity);
             quantity++;
-            System.out.println(quantity);
         } else {
             System.out.println("Error, not coin");
         }

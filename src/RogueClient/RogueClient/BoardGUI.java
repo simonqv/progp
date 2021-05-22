@@ -61,14 +61,21 @@ public class BoardGUI {
             if (b == 0) break;
             sb.append((char) b);
         }
-        System.out.println(sb.toString());
         return sb.toString();
     }
 
     public void displayMessage(InputStream input) throws IOException {
         frame.getContentPane().removeAll();
         JTextArea messageScreen = new JTextArea();
-        messageScreen.setText(input.readNBytes(10).toString());
+        StringBuilder sb = new StringBuilder();
+
+        while (true) {
+            int b = input.read();
+            if (b == 0) break;
+            sb.append((char) b);
+        }
+        String message = sb.toString();
+        messageScreen.setText(message);
         frame.add(messageScreen, BorderLayout.CENTER);
         frame.validate();
     }
