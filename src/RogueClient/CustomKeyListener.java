@@ -1,4 +1,7 @@
 package RogueClient;
+// Simon Larspers Qvist
+// Beata Johansson
+// INET 2021
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -11,6 +14,10 @@ public class CustomKeyListener implements KeyListener {
         this.client = client;
     }
 
+    /**
+     * Detects button press on keyboard.
+     * @param e the key event, keyboard press.
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();

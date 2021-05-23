@@ -1,4 +1,7 @@
 package RogueClient;
+// Simon Larspers Qvist
+// Beata Johansson
+// INET 2021
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +13,7 @@ public class BoardGUI {
     private byte[] mapArray;
     JFrame frame;
 
+
     public BoardGUI(InputStream inputStream, int w, int h, int id) throws IOException {
         this.mapArray = inputStream.readNBytes(h * w);
         this.frame = new JFrame("Game Board " + id);
@@ -17,10 +21,22 @@ public class BoardGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Updates mapArray with server input.
+     * @param inputStream input from server.
+     * @param w width size of map array.
+     * @param h height size if map array.
+     */
     public void updateMap(InputStream inputStream, int w, int h) throws IOException {
         mapArray = inputStream.readNBytes(h * w);
     }
 
+    /**
+     * Creates the window to play in.
+     * @param w size of map
+     * @param h size of map
+     * @param client Which client is playing
+     */
     public void gameWindow(int w, int h, Client client) {
         JTextArea board = new JTextArea(); 
         board.setFont(new Font("monospaced", Font.PLAIN, 12));
@@ -31,6 +47,12 @@ public class BoardGUI {
         frame.pack();
     }
 
+    /**
+     * Converts byte Array to a string to print.
+     * @param w width of array
+     * @param h height of array
+     * @return String representation of map.
+     */
     private String boardToString(int w, int h) {
         StringBuilder sb = new StringBuilder();
         int k = 0;
@@ -47,12 +69,21 @@ public class BoardGUI {
         return sb.toString();
     }
 
+    /**
+     * Display updated inventory.
+     * @param input input form server, containing inventory.
+     */
     public void updateInventory(InputStream input) throws IOException {
         JTextArea inventory = new JTextArea();
         inventory.setText(invToString(input));
         frame.add(inventory, BorderLayout.PAGE_END);
     }
 
+    /**
+     * Convert input from server to a String.
+     * @param input the input from server.
+     * @return return String representation of inventory.
+     */
     private String invToString(InputStream input) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -71,6 +102,10 @@ public class BoardGUI {
         return sb.toString();
     }
 
+    /**
+     * Display winning message!
+     * @param input message from server
+     */
     public void displayMessage(InputStream input) throws IOException {
         frame.getContentPane().removeAll();
         JTextArea messageScreen = new JTextArea();

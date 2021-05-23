@@ -15,6 +15,9 @@ public class Client {
     private int id;
     private BoardGUI boardGUI = null;
 
+    /**
+     * Run the client and connect to server.
+     */
     public void runClient() {
         String hostname = "localhost";
         int port = 9999;
@@ -41,20 +44,17 @@ public class Client {
                 System.exit(-2);
             }
 
+            // Create game board after connection.
             int code = input.read();
             if (code == CommandConstants.BOARD) {
                 boardGUI = new BoardGUI(input, width, height, id);
             }
 
-                /*
-                Ska ta emot spelplanen och skriva ut, även när den andra spelaren gjort något, ska ej fastna på att vänta
-                på input från denna spelare...
-                ska skicka actions till servern.
-                 */
             do {
+                // Display the game.
                 boardGUI.gameWindow(width, height, this);
-                
-                // Read first sign from input. If 1, update board...
+
+                // Read first sign from input. If 10, update board...
                 code = input.read();
 
                 switch (code) {
@@ -62,23 +62,26 @@ public class Client {
                     case CommandConstants.INVENTORY -> boardGUI.updateInventory(input);
                     case CommandConstants.MESSAGE -> boardGUI.displayMessage(input);
                 }
-                if (code == CommandConstants.MESSAGE) break;
-            } while (true);
+            } while (code != CommandConstants.MESSAGE);
 
         } catch (UnknownHostException ex) {
-            System.out.println("Server.Server not found: " + ex.getMessage());
+            System.out.println("Server not found: " + ex.getMessage());
         } catch (IOException ex) {
             System.out.println("I/O error: " + ex.getMessage());
         }
     }
 
+    // In case of KEY EVENT, send action to server.
     public void send(int action) throws IOException {
-        output.write(new byte[] {
+        output.write(new byte[]{
                 CommandConstants.ACTION,
                 (byte) id,
                 (byte) action});
     }
 
+    /**
+     * To run the client.
+     */
     public static void main(String[] args) {
         new Client().runClient();
     }

@@ -10,6 +10,9 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Server class. Starts the server and server threads for each new client.
+ */
 public class Server {
 
     private final List<GameBoardListener> clients = new ArrayList<>();
@@ -32,6 +35,7 @@ public class Server {
                 id++;
                 ServerThread thread = new ServerThread(socket, id, myGame);
                 thread.start();
+                // Adds to listeners
                 clients.add(thread);
             } catch (SocketException se) {
                 System.out.println("Connection reset");
@@ -40,6 +44,9 @@ public class Server {
 
     }
 
+    /**
+     * Runner.
+     */
     public static void main(String[] args) throws IOException {
         new Server().runServer();
     }

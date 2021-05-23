@@ -1,41 +1,51 @@
 package RogueServer;
+// Simon Larspers Qvist
+// Beata Johansson
+// INET 2021
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class GameBoard {
+    // Size and gameBoard
     public int width = 50;
     public int height = 40;
     public char[][] gameMap;
 
+    // Constants
     public static final char DIRT = '#';
     public static final char CAVE = ' ';
     public static final char DOOR = '+';
     public static final char COIN = '*';
     public static final char BUTTON = 'B';
-
     public static final char FIRSTKEY = '?';
     public static final char SECONDKEY = '!';
+    public final int numberOfCoins = 50;
 
-    int[] firstKeyPosition = new int[]{26,22};
-    int[] secondKeyPosition = new int[]{22,46};
-    int[] buttonDoor = new int[]{11,40};
-    int[] sndButtonDoor = new int[]{31, 12}; // fixa koordinater
-    int[] firstKeyDoor = new int[]{5,18};
-    int[] secondKeyDoor = new int[]{38,24};
+    // Coordinates for keys
+    int[] firstKeyPosition = new int[]{26, 22};
+    int[] secondKeyPosition = new int[]{22, 46};
 
+    // Coordinates for doors
+    int[] buttonDoor = new int[]{11, 40};
+    int[] sndButtonDoor = new int[]{31, 12};
+    int[] firstKeyDoor = new int[]{5, 18};
+    int[] secondKeyDoor = new int[]{38, 24};
+
+    // Coordinates for buttons
     // Button one: x,y, Button two: x,y.
     int[] fstDoorButtons = new int[]{10, 39, 10, 41};
     int[] sndDoorButtons = new int[]{26, 9, 34, 5};
 
+    // array of door positions
     int[][] doorPositions = new int[][]{buttonDoor, sndButtonDoor, firstKeyDoor, secondKeyDoor}; // 3 doors...
-    public int numberOfCoins = 50;  
 
     private final List<GameBoardListener> listeners;
 
     /**
      * Create a new game board.
+     *
      * @param listeners
      */
     public GameBoard(List<GameBoardListener> listeners) {
@@ -83,10 +93,15 @@ public class GameBoard {
         addDoors();
     }
 
-    public void addDoors() {
-        for(int[] doorPosition : doorPositions) {
+    /**
+     * Places the doors on the map.
+     */
+    private void addDoors() {
+        for (int[] doorPosition : doorPositions) {
             gameMap[doorPosition[0]][doorPosition[1]] = DOOR;
-            if (doorPosition[0] == buttonDoor[0] && doorPosition[1] == buttonDoor[1]){
+
+            // If door has corresponding buttons, place them as well.
+            if (doorPosition[0] == buttonDoor[0] && doorPosition[1] == buttonDoor[1]) {
                 gameMap[fstDoorButtons[0]][fstDoorButtons[1]] = BUTTON;
                 gameMap[fstDoorButtons[2]][fstDoorButtons[3]] = BUTTON;
             }
@@ -107,68 +122,81 @@ public class GameBoard {
         placeCoins(numberOfCoins);
     }
 
-     /**
-      * Place character on the map.
-      * @param player the player that's going to move.
-      */
-     public void placePlayer(Player player) {
-         gameMap[player.hPos][player.wPos] = player.getNameString();
+    /**
+     * Place character on the map.
+     *
+     * @param player the player that's going to move.
+     */
+    public void placePlayer(Player player) {
+        gameMap[player.hPos][player.wPos] = player.getNameChar();
 
-         if (buttonsArePressed(fstDoorButtons)) {
-             // Unlock button-door
-             unlockDoor(buttonDoor);
+        // Unlock button-door if buttons are pressed.
+        if (buttonsArePressed(fstDoorButtons)) {
+            unlockDoor(buttonDoor);
+        } else if (buttonsArePressed(sndDoorButtons)) {
+            unlockDoor(sndButtonDoor);
 
-         } else if (buttonsArePressed(sndDoorButtons)) {
-
-             unlockDoor(sndButtonDoor);
-         } else if(player.inventory.exists(new Item(Item.ItemType.FIRST_KEY, 0)) && player.hPos == firstKeyDoor[0] && player.wPos == firstKeyDoor[1]+1){
-            // Unlock door with the first key
+        // Unlocks doors with keys
+        } else if (player.inventory.exists(new Item(Item.ItemType.FIRST_KEY, 0)) && player.hPos == firstKeyDoor[0] && player.wPos == firstKeyDoor[1] + 1) {
             unlockDoor(firstKeyDoor);
-         } else if(player.inventory.exists(new Item(Item.ItemType.SECOND_KEY, 0)) && player.hPos == secondKeyDoor[0]-1 && player.wPos == secondKeyDoor[1]){
-            // Unlock door with the second key
+        } else if (player.inventory.exists(new Item(Item.ItemType.SECOND_KEY, 0)) && player.hPos == secondKeyDoor[0] - 1 && player.wPos == secondKeyDoor[1]) {
             unlockDoor(secondKeyDoor);
 
-         } else if (player.hPos == secondKeyDoor[0] + 1 && player.wPos == secondKeyDoor[1]) {
-             listeners.forEach(GameBoardListener::boardChanged);
+        // If one player located on exit coordinates (win)
+        } else if (player.hPos == secondKeyDoor[0] + 1 && player.wPos == secondKeyDoor[1]) {
+            listeners.forEach(GameBoardListener::boardChanged);
+            // It is a win!
+            listeners.forEach(GameBoardListener::winner);
+        }
 
-             // It is a win!
-             listeners.forEach(GameBoardListener::winner);
-         }
-         // Notify all listeners of the changed game board
-         listeners.forEach(GameBoardListener::boardChanged);
-     }
+        // Notify all listeners of the changed game board
+        listeners.forEach(GameBoardListener::boardChanged);
+    }
 
-     /**
-      * Change the players position on board.
-      */
-     public void movePlayer(Player player, int hOld, int wOld) {
-         // Set old position to empty.
-         if (hOld == fstDoorButtons[0] && wOld == fstDoorButtons[1] || hOld == fstDoorButtons[2] && wOld == fstDoorButtons[3] || hOld == sndDoorButtons[0] && wOld == sndDoorButtons[1] || hOld == sndDoorButtons[2] && wOld == sndDoorButtons[3]) {
+    /**
+     * Change the players position on board.
+     */
+    public void movePlayer(Player player, int hOld, int wOld) {
+        // If position was button, keep button, else make empty
+        if (hOld == fstDoorButtons[0] && wOld == fstDoorButtons[1] || hOld == fstDoorButtons[2] && wOld == fstDoorButtons[3] || hOld == sndDoorButtons[0] && wOld == sndDoorButtons[1] || hOld == sndDoorButtons[2] && wOld == sndDoorButtons[3]) {
             gameMap[hOld][wOld] = BUTTON;
-         } else{
+        } else {
             gameMap[hOld][wOld] = CAVE;
-         }        
-         // Place the player on the next position.
-         placePlayer(player);
-     }
+        }
 
-     public boolean buttonsArePressed(int[] buttons) {
-         return gameMap[buttons[0]][buttons[1]] != BUTTON && gameMap[buttons[2]][buttons[3]] != BUTTON;
-     }
+        // Place the player on the next position.
+        placePlayer(player);
+    }
 
-     public void unlockDoor(int[] door) {
+    /**
+     * Check if both door buttons are pressed.
+     * @param buttons The buttons to check.
+     * @return true if pressed.
+     */
+    public boolean buttonsArePressed(int[] buttons) {
+        return gameMap[buttons[0]][buttons[1]] != BUTTON && gameMap[buttons[2]][buttons[3]] != BUTTON;
+    }
+
+    /**
+     * Replace DOOR symbol with empty when opening them.
+     * @param door The door to open.
+     */
+    public void unlockDoor(int[] door) {
         gameMap[door[0]][door[1]] = CAVE;
-     }
+    }
 
-
+    /**
+     * Converts the game board to a byte array.
+     * @return the byte array.
+     */
     public byte[] toByte() {
         // convert to byte!
         int k = 0;
         byte[] byteBoard = new byte[height * width];
-        for (int i = 0; i < height; i++){
+        for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 byteBoard[k] = (byte) gameMap[i][j];
-                k ++;
+                k++;
             }
         }
         return byteBoard;
@@ -176,14 +204,15 @@ public class GameBoard {
 
     /**
      * Draw cave on game board based on specified coordinates and cave size.
-     * @param rowPosition
-     * @param colPosition
-     * @param rowSize
-     * @param colSize
+     *
+     * @param rowPosition Upper left corner row
+     * @param colPosition Upper left corner column
+     * @param rowSize How many rows
+     * @param colSize How many columns
      */
     public void addCave(int rowPosition, int colPosition, int rowSize, int colSize, char caveSymbol) {
-        for(int row = rowPosition; row < rowPosition+rowSize; row++) {
-            for(int col = colPosition; col < colPosition+colSize; col++) {
+        for (int row = rowPosition; row < rowPosition + rowSize; row++) {
+            for (int col = colPosition; col < colPosition + colSize; col++) {
                 gameMap[row][col] = caveSymbol;
             }
         }
@@ -191,40 +220,33 @@ public class GameBoard {
 
     /**
      * Draw a horizontal tunnel on game board.
-     * @param rowPosition
-     * @param colPosition
-     * @param length
+     *
+     * @param rowPosition Start row.
+     * @param colPosition Start column.
+     * @param length How long.
      */
     public void addHorizontalTunnel(int rowPosition, int colPosition, int length) {
-        for(int col = colPosition-1; col < colPosition+length; col++) {
+        for (int col = colPosition - 1; col < colPosition + length; col++) {
             gameMap[rowPosition][col] = CAVE;
         }
     }
 
     /**
      * Draw a vertical tunnel on game board.
-     * @param rowPosition
-     * @param colPosition
-     * @param length
+     *
+     * @param rowPosition Start row.
+     * @param colPosition Start column.
+     * @param length How long.
      */
     public void addVerticalTunnel(int rowPosition, int colPosition, int length) {
-        for(int row = rowPosition-1; row < rowPosition+length; row++) {
+        for (int row = rowPosition - 1; row < rowPosition + length; row++) {
             gameMap[row][colPosition] = CAVE;
         }
     }
 
-    public void printMap() {
-        for(char[] row : gameMap) {
-            for (char c : row) {
-                System.out.print(c);
-                System.out.print(" ");
-            }
-            System.out.println();
-        }
-    }
-
     /**
-     * Get the witdth of board.
+     * Get the width of board.
+     *
      * @return width.
      */
     public int getWidth() {
@@ -233,6 +255,7 @@ public class GameBoard {
 
     /**
      * Get the height of board.
+     *
      * @return height.
      */
     public int getHeight() {
@@ -241,16 +264,17 @@ public class GameBoard {
 
     /**
      * Place all coins on game board.
-     * @param numberOfCoins
+     *
+     * @param numberOfCoins How many coins to place.
      */
-    public void placeCoins(int numberOfCoins){
+    public void placeCoins(int numberOfCoins) {
         int num = numberOfCoins;
         int row;
         int col;
-        while(num != 0) {
+        while (num != 0) {
             row = generateRandomIndex(getHeight());
             col = generateRandomIndex(getWidth());
-            if(gameMap[row][col] == CAVE) {
+            if (gameMap[row][col] == CAVE) {
                 gameMap[row][col] = COIN;
                 num--;
             }
@@ -259,9 +283,10 @@ public class GameBoard {
 
     /**
      * Add a key to game board.
-     * @param key
-     * @param row
-     * @param col
+     *
+     * @param key Char representing the key.
+     * @param row row coordinate.
+     * @param col column coordinate.
      */
     public void placeKey(char key, int row, int col) {
         gameMap[row][col] = key;
@@ -269,20 +294,24 @@ public class GameBoard {
 
     /**
      * Generates a random index between lower bound 0 and the upper bound.
-     * @param upperBound
+     *
+     * @param upperBound Maximum number allowed.
      * @return index
      */
     public int generateRandomIndex(int upperBound) {
         Random randomizer = new Random();
-        int index = randomizer.nextInt(upperBound);
-        return index;
+        return randomizer.nextInt(upperBound);
     }
 
-    //     private final List<GameBoardListener> listeners;
+    /**
+     * If client closes, remove said client from listeners.
+     * @param client the client to remove.
+     */
     public void removeClient(ServerThread client) {
         listeners.remove(client);
         removePlayer(client.getPlayer());
 
+        // If client had keys in inventory, replace them on the map. (otherwise might not be able to finish the game)
         if (client.getPlayer().inventory.exists(new Item(Item.ItemType.FIRST_KEY, 1))) {
             placeKey(FIRSTKEY, firstKeyPosition[0], firstKeyPosition[1]);
         }
@@ -291,6 +320,10 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Remove a player from the game board.
+     * @param player The player to remove.
+     */
     private void removePlayer(Player player) {
         int h = player.hPos;
         int w = player.wPos;

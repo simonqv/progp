@@ -1,4 +1,7 @@
 package RogueServer;
+// Simon Larspers Qvist
+// Beata Johansson
+// INET 2021
 
 import RogueCommon.CommandConstants;
 
@@ -9,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
- * Handles actions etc.
+ * Handles the separate clients
  */
 public class ServerThread extends Thread implements GameBoardListener {
     private final Socket socket;
@@ -25,6 +28,9 @@ public class ServerThread extends Thread implements GameBoardListener {
         this.myGame = myGame;
     }
 
+    /**
+     * Runs the thread
+     */
     public void run() {
         try {
             // Input from Client.
@@ -33,11 +39,11 @@ public class ServerThread extends Thread implements GameBoardListener {
             // Output to Client.
             output = socket.getOutputStream();
 
-            // Connection
+            // Connection request.
             int requestCommand = input.read();
             if (requestCommand == CommandConstants.CONNECT) {
                 input.readNBytes(2);
-                // Send code 0, player/client ID, and size of map to Client.
+                // Send code CONNECT (0), player/client ID, and size of map to Client.
                 output.write(new byte[]{
                         CommandConstants.CONNECT,
                         (byte) id,
@@ -48,12 +54,6 @@ public class ServerThread extends Thread implements GameBoardListener {
             player = new Player(id, myGame);
             myGame.placePlayer(player);
 
-
-                /*
-                Behöver fixa så att först spelplanen skickas till båda clienterna kontinuerligt.
-                Behöver även lyssna på om den får någon action input från clienten. Får den från ena måste bådas
-                spelplaner uppdateras
-                 */
             do {
                 try {
                     sendGameBoard(output);
@@ -75,11 +75,15 @@ public class ServerThread extends Thread implements GameBoardListener {
             } while (true);
 
         } catch (IOException ex) {
-            System.out.println("Server.Server exception: " + ex.getMessage());
+            System.out.println("Server connection exception: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
+    /**
+     * Send the inventory as null terminated byte array with INVENTORY (11) code first
+     * @param output the output connection to client. (What to send)
+     */
     private void sendInventory(OutputStream output) throws IOException {
         // Convert inventory to byteArray.
         if (player.inventory != null) {
@@ -101,6 +105,10 @@ public class ServerThread extends Thread implements GameBoardListener {
         }
     }
 
+    /**
+     * Sends fixed size byte array of game board to client.
+     * @param output the output connection to client.
+     */
     private void sendGameBoard(OutputStream output) throws IOException {
         // Convert game map to byteArray.
         byte[] byteMap = myGame.toByte();
@@ -109,6 +117,10 @@ public class ServerThread extends Thread implements GameBoardListener {
         output.write(byteMap);
     }
 
+    /**
+     * Send the nul-terminated byte array of winning message to client.
+     * @param output the output connection to client.
+     */
     private void sendWinner(OutputStream output) throws IOException {
         // Send message that game is done.
         String m = "WIN!! THE GAME IS OVER! :^)" ;
@@ -119,6 +131,9 @@ public class ServerThread extends Thread implements GameBoardListener {
         output.write(0);
     }
 
+    /**
+     * Update game board.
+     */
     @Override
     public void boardChanged() {
         try {
@@ -128,6 +143,9 @@ public class ServerThread extends Thread implements GameBoardListener {
         }
     }
 
+    /**
+     * Game win.
+     */
     @Override
     public void winner() {
         try {

@@ -1,8 +1,10 @@
 package RogueServer;
-
+// Simon Larspers Qvist
+// Beata Johansson
+// INET 2021
 
 public class Item {
-    enum ItemType { NET, FIRST_KEY, SECOND_KEY, COINS }
+    enum ItemType { FIRST_KEY, SECOND_KEY, COINS }
 
     ItemType item;
     int quantity;
@@ -13,14 +15,10 @@ public class Item {
     }
 
     /**
-     * Increases the quantity of coins.
+     * Increases the quantity of the item. (In this case, coins)
      */
-    public void pickupCoin() {
-        if (item == ItemType.COINS) {
-            quantity++;
-        } else {
-            System.out.println("Error, not coin");
-        }
+    public void increaseQuantity() {
+        quantity++;
     }
 
     public ItemType getItem() {
@@ -28,16 +26,6 @@ public class Item {
     }
 
     public int getQuantity() {return quantity;}
-
-
-    /**
-     *
-     * @param other the item to check.
-     * @return True if ItemType is the same.
-     */
-    public boolean equals(Item other) {
-        return other.item == this.item;
-    }
 
     /**
      *
