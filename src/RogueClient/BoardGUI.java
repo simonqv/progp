@@ -58,9 +58,16 @@ public class BoardGUI {
 
         while (true) {
             int b = input.read();
+
             if (b == 0) break;
+            if ((char) b == ',' || (char) b == '_') {
+                b = ' ';
+            } else if ((char) b == '.') {
+                b = ':';
+            }
             sb.append((char) b);
         }
+
         return sb.toString();
     }
 
@@ -79,5 +86,4 @@ public class BoardGUI {
         frame.add(messageScreen, BorderLayout.CENTER);
         frame.validate();
     }
-
 }

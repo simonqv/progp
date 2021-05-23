@@ -6,6 +6,7 @@ package RogueServer;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +26,16 @@ public class Server {
 
         System.out.println("Server.Server is listening on port " + port);
         while (true) {
-            Socket socket = serverSocket.accept();
-            System.out.println("New client connected");
-            id ++;
-            ServerThread thread = new ServerThread(socket, id, myGame);
-            thread.start();
-            clients.add(thread);
+            try {
+                Socket socket = serverSocket.accept();
+                System.out.println("New client connected");
+                id++;
+                ServerThread thread = new ServerThread(socket, id, myGame);
+                thread.start();
+                clients.add(thread);
+            } catch (SocketException se) {
+                System.out.println("Connection reset");
+            }
         }
 
     }

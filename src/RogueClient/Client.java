@@ -60,9 +60,9 @@ public class Client {
                 switch (code) {
                     case CommandConstants.BOARD -> boardGUI.updateMap(input, width, height);
                     case CommandConstants.INVENTORY -> boardGUI.updateInventory(input);
-                    case CommandConstants.WINNER -> boardGUI.displayMessage(input);
+                    case CommandConstants.MESSAGE -> boardGUI.displayMessage(input);
                 }
-                if (code == CommandConstants.WINNER) break;
+                if (code == CommandConstants.MESSAGE) break;
             } while (true);
 
         } catch (UnknownHostException ex) {

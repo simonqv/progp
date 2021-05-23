@@ -21,10 +21,15 @@ public class GameBoard {
     int[] firstKeyPosition = new int[]{26,22};
     int[] secondKeyPosition = new int[]{22,46};
     int[] buttonDoor = new int[]{11,40};
+    int[] sndButtonDoor = new int[]{31, 12}; // fixa koordinater
     int[] firstKeyDoor = new int[]{5,18};
     int[] secondKeyDoor = new int[]{38,24};
 
-    int[][] doorPositions = new int[][]{buttonDoor, firstKeyDoor, secondKeyDoor}; // 3 doors...
+    // Button one: x,y, Button two: x,y.
+    int[] fstDoorButtons = new int[]{10, 39, 10, 41};
+    int[] sndDoorButtons = new int[]{26, 9, 34, 5};
+
+    int[][] doorPositions = new int[][]{buttonDoor, sndButtonDoor, firstKeyDoor, secondKeyDoor}; // 3 doors...
     public int numberOfCoins = 50;  
 
     private final List<GameBoardListener> listeners;
@@ -82,9 +87,14 @@ public class GameBoard {
         for(int[] doorPosition : doorPositions) {
             gameMap[doorPosition[0]][doorPosition[1]] = DOOR;
             if (doorPosition[0] == buttonDoor[0] && doorPosition[1] == buttonDoor[1]){
-                gameMap[doorPosition[0]-1][doorPosition[1]-1] = BUTTON;
-                gameMap[doorPosition[0]-1][doorPosition[1]+1] = BUTTON;
+                gameMap[fstDoorButtons[0]][fstDoorButtons[1]] = BUTTON;
+                gameMap[fstDoorButtons[2]][fstDoorButtons[3]] = BUTTON;
             }
+            if (doorPosition[0] == sndButtonDoor[0] && doorPosition[1] == sndButtonDoor[1]) {
+                gameMap[sndDoorButtons[0]][sndDoorButtons[1]] = BUTTON;
+                gameMap[sndDoorButtons[2]][sndDoorButtons[3]] = BUTTON;
+            }
+
         }
     }
 
@@ -103,19 +113,26 @@ public class GameBoard {
       */
      public void placePlayer(Player player) {
          gameMap[player.hPos][player.wPos] = player.getNameString();
-        
-         if (buttonsArePressed()) {
-            // Unlock button-door
-            unlockDoor(buttonDoor);
+
+         if (buttonsArePressed(fstDoorButtons)) {
+             // Unlock button-door
+             unlockDoor(buttonDoor);
+
+         } else if (buttonsArePressed(sndDoorButtons)) {
+
+             unlockDoor(sndButtonDoor);
          } else if(player.inventory.exists(new Item(Item.ItemType.FIRST_KEY, 0)) && player.hPos == firstKeyDoor[0] && player.wPos == firstKeyDoor[1]+1){
             // Unlock door with the first key
             unlockDoor(firstKeyDoor);
          } else if(player.inventory.exists(new Item(Item.ItemType.SECOND_KEY, 0)) && player.hPos == secondKeyDoor[0]-1 && player.wPos == secondKeyDoor[1]){
             // Unlock door with the second key
             unlockDoor(secondKeyDoor);
-            // It is a win!
-            listeners.forEach(GameBoardListener::boardChanged);
-            listeners.forEach(GameBoardListener::winner);
+
+         } else if (player.hPos == secondKeyDoor[0] + 1 && player.wPos == secondKeyDoor[1]) {
+             listeners.forEach(GameBoardListener::boardChanged);
+
+             // It is a win!
+             listeners.forEach(GameBoardListener::winner);
          }
          // Notify all listeners of the changed game board
          listeners.forEach(GameBoardListener::boardChanged);
@@ -126,18 +143,17 @@ public class GameBoard {
       */
      public void movePlayer(Player player, int hOld, int wOld) {
          // Set old position to empty.
-         if (hOld == buttonDoor[0]-1 && wOld == buttonDoor[1]-1 || hOld == buttonDoor[0]-1 && wOld == buttonDoor[1]+1){
+         if (hOld == fstDoorButtons[0] && wOld == fstDoorButtons[1] || hOld == fstDoorButtons[2] && wOld == fstDoorButtons[3] || hOld == sndDoorButtons[0] && wOld == sndDoorButtons[1] || hOld == sndDoorButtons[2] && wOld == sndDoorButtons[3]) {
             gameMap[hOld][wOld] = BUTTON;
-         }
-         else{
+         } else{
             gameMap[hOld][wOld] = CAVE;
          }        
          // Place the player on the next position.
          placePlayer(player);
      }
 
-     public boolean buttonsArePressed() {
-         return gameMap[buttonDoor[0]-1][buttonDoor[1]-1] != BUTTON && gameMap[buttonDoor[0]-1][buttonDoor[1]+1] != BUTTON;
+     public boolean buttonsArePressed(int[] buttons) {
+         return gameMap[buttons[0]][buttons[1]] != BUTTON && gameMap[buttons[2]][buttons[3]] != BUTTON;
      }
 
      public void unlockDoor(int[] door) {
@@ -262,4 +278,22 @@ public class GameBoard {
         return index;
     }
 
+    //     private final List<GameBoardListener> listeners;
+    public void removeClient(ServerThread client) {
+        listeners.remove(client);
+        removePlayer(client.getPlayer());
+
+        if (client.getPlayer().inventory.exists(new Item(Item.ItemType.FIRST_KEY, 1))) {
+            placeKey(FIRSTKEY, firstKeyPosition[0], firstKeyPosition[1]);
+        }
+        if (client.getPlayer().inventory.exists(new Item(Item.ItemType.SECOND_KEY, 1))) {
+            placeKey(SECONDKEY, secondKeyPosition[0], secondKeyPosition[1]);
+        }
+    }
+
+    private void removePlayer(Player player) {
+        int h = player.hPos;
+        int w = player.wPos;
+        gameMap[h][w] = CAVE;
+    }
 }

@@ -4,6 +4,7 @@ import RogueCommon.CommandConstants;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
@@ -54,18 +55,23 @@ public class ServerThread extends Thread implements GameBoardListener {
                 spelplaner uppdateras
                  */
             do {
-                sendGameBoard(output);
-                sendInventory(output);
+                try {
+                    sendGameBoard(output);
+                    sendInventory(output);
 
-                // code from client for action
-                int code = input.read();
-                if (code == CommandConstants.ACTION) {
-                    // act is ID and type of action.
-                    byte[] act = input.readNBytes(2);
-                    player.action(act, myGame);
+                    // code from client for action
+                    int code = input.read();
+                    if (code == CommandConstants.ACTION) {
+                        // act is ID and type of action.
+                        byte[] act = input.readNBytes(2);
+                        player.action(act, myGame);
+                    }
+
+                } catch (SocketException se) {
+                    System.out.println("Client " + id + " disconnected!");
+                    myGame.removeClient(this);
+                    break;
                 }
-
-
             } while (true);
 
         } catch (IOException ex) {
@@ -104,11 +110,11 @@ public class ServerThread extends Thread implements GameBoardListener {
     }
 
     private void sendWinner(OutputStream output) throws IOException {
-        // Send the winner based on amount of collected coins in inventory
-        String m = "SPELET AR SLUT!";
+        // Send message that game is done.
+        String m = "WIN!! THE GAME IS OVER! :^)" ;
         byte[] byteString = m.getBytes();
         // Send the byteArray to the Client.
-        output.write(CommandConstants.WINNER);
+        output.write(CommandConstants.MESSAGE);
         output.write(byteString);
         output.write(0);
     }
@@ -131,6 +137,9 @@ public class ServerThread extends Thread implements GameBoardListener {
         }
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 }
 
 
