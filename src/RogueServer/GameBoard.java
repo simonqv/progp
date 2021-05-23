@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import RogueServer.Item.ItemType;
-
 public class GameBoard {
     public int width = 50;
     public int height = 40;
@@ -109,10 +107,10 @@ public class GameBoard {
          if (buttonsArePressed()) {
             // Unlock button-door
             unlockDoor(buttonDoor);
-         } else if(player.inventory.exists(new Item(ItemType.FIRST_KEY, 0)) && player.hPos == firstKeyDoor[0] && player.wPos == firstKeyDoor[1]+1){
+         } else if(player.inventory.exists(new Item(Item.ItemType.FIRST_KEY, 0)) && player.hPos == firstKeyDoor[0] && player.wPos == firstKeyDoor[1]+1){
             // Unlock door with the first key
             unlockDoor(firstKeyDoor);
-         } else if(player.inventory.exists(new Item(ItemType.SECOND_KEY, 0)) && player.hPos == secondKeyDoor[0]-1 && player.wPos == secondKeyDoor[1]){
+         } else if(player.inventory.exists(new Item(Item.ItemType.SECOND_KEY, 0)) && player.hPos == secondKeyDoor[0]-1 && player.wPos == secondKeyDoor[1]){
             // Unlock door with the second key
             unlockDoor(secondKeyDoor);
             // It is a win!
