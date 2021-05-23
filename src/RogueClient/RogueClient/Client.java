@@ -1,4 +1,5 @@
-package RogueClient;// Simon Larspers Qvist
+package RogueClient;
+// Simon Larspers Qvist
 // Beata Johansson
 // INET 2021
 
@@ -52,13 +53,16 @@ public class Client {
                  */
             do {
                 boardGUI.gameWindow(width, height, this);
+                
                 // Read first sign from input. If 1, update board...
                 code = input.read();
 
                 switch (code) {
                     case CommandConstants.BOARD -> boardGUI.updateMap(input, width, height);
                     case CommandConstants.INVENTORY -> boardGUI.updateInventory(input);
+                    case CommandConstants.WINNER -> boardGUI.displayMessage(input);
                 }
+                if (code == CommandConstants.WINNER) break;
             } while (true);
 
         } catch (UnknownHostException ex) {

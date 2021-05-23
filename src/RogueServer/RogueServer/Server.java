@@ -1,4 +1,5 @@
-package RogueServer;// Simon Larspers Qvist
+package RogueServer;
+// Simon Larspers Qvist
 // Beata Johansson
 // INET 2021
 

@@ -19,7 +19,6 @@ public class Inventory {
         if (item.getItem() == Item.ItemType.COINS) {
 
             if (exists(item)) {
-                System.out.println("hej");
                 item.pickupCoin();
             } else {
                 items.add(item);
@@ -32,7 +31,7 @@ public class Inventory {
         }
     }
 
-    private boolean exists(Item item) {
+    public boolean exists(Item item) {
         return items.stream().anyMatch(o -> o.getItem().equals(item.getItem()));
     }
 
