@@ -22,6 +22,7 @@ public class CustomKeyListener implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         try {
+            // 1 = LEFT action, 2 = UP action, 3 = RIGHT action, 4 = DOWN action.
             switch (keyCode) {
                 case KeyEvent.VK_UP -> client.send(2);
                 case KeyEvent.VK_DOWN -> client.send(4);

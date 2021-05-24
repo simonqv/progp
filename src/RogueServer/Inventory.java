@@ -1,7 +1,4 @@
 package RogueServer;
-// Simon Larspers Qvist
-// Beata Johansson
-// INET 2021
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +12,17 @@ public class Inventory {
 
     /**
      * Adds item to the players inventory.
-     *
      * @param item to add.
      */
     public void addItem(Item item) {
+        if (item.getItem() == Item.ItemType.COINS) {
+            if (exists(item)) {
+                item.increaseQuantity();
+            } else {
+                items.add(item);
+            }
 
-        if (item.getItem() == Item.ItemType.FIRST_KEY || item.getItem() == Item.ItemType.SECOND_KEY) {
+        } else if (item.getItem() == Item.ItemType.FIRST_KEY || item.getItem() == Item.ItemType.SECOND_KEY) {
             items.add(item);
         } else {
             System.out.println("Something went wrong in the pickup...");

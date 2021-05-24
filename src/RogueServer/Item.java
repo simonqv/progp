@@ -35,4 +35,13 @@ public class Item {
         return quantity + "." + item;
     }
 
+    /**
+     *
+     * @param other the item to check.
+     * @return True if ItemType is the same.
+     */
+    public boolean equals(Item other) {
+        return other.item == this.item;
+    }
+
 }
