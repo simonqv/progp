@@ -42,6 +42,7 @@ public class BoardGUI {
         board.setFont(new Font("monospaced", Font.PLAIN, 12));
         board.setText(boardToString(w, h));
         board.addKeyListener(new CustomKeyListener(client));
+        board.setEditable(false);
         frame.add(board);
         frame.setVisible(true);
         frame.pack();
@@ -76,6 +77,7 @@ public class BoardGUI {
     public void updateInventory(InputStream input) throws IOException {
         JTextArea inventory = new JTextArea();
         inventory.setText(invToString(input));
+        inventory.setEditable(false);
         frame.add(inventory, BorderLayout.PAGE_END);
     }
 
