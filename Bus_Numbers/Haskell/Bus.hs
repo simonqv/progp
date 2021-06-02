@@ -11,21 +11,22 @@ toIntList x = map read (words x)::[Int]
 
 
 merge :: [Int] -> [String]
-{-
 merge [] = []
-
 merge (a:b:c:rest)
-  | abs a-b == 1 && abs a-c == 2 = show a : "-" : merge (findEnd (a+2 : rest))
-  | otherwise = show a : merge rest
+  | b-a == 1 && c-a == 2 = (show a ++ "-" ++ (show (head (findEnd (c : rest))))) : merge (drop 1 ( findEnd (c : rest)))
+  | b-a == 1 && c-a /= 2 = show a : show b : merge (c : rest)
+  | a == b = merge (b:c:rest)
+  | otherwise = show a : merge (b:c:rest)
+merge (a:rest) = show a : merge rest
 
---merge a = [show a]
--}
 
+findEnd :: [Int] -> [Int]
 findEnd [] = []
-
 findEnd (a:b:rest)
-  | abs a-b == 1 = findEnd (b:rest)
+  | b-a == 1 = findEnd (b:rest)
+  | b-a == 0 = findEnd (b:rest)
   | otherwise = a : b : rest
+findEnd (a:rest) = a : rest
 
 
 
