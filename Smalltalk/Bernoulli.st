@@ -1,37 +1,36 @@
-
 Object subclass: #Bernoulli.
-Bernoulli instanceVariableNames: 'seq'.
-
 Bernoulli class extend [
 
+  bernoulli: n [
+    |bm Ar bk bin y|
 
-new [
-     | r |
-     <category: 'instance creation'>
-     r := super new.
-     r init.
-     ^r
+    Ar := Array new: n+1.
+    Ar at: 1 put: 1.
+
+    2 to: n+1 do: [:m |
+      bm := 0.
+      1 to: (m-1) do: [:k |
+        bk := Ar at: (k).
+        bin := Bernoulli binom: (m) and: (k-1).
+        bm := (bm - (bin*bk)).
+      ].
+      y := (bm / m).
+
+      Ar at: (m) put: y.
+      ].
+      ^Ar
     ]
 
- init [
-        |seq|
-       seq := 2
-      ]
+    binom: l and: s [
+        |r|
+        r := 1.
+        1 to: s do: [:i |
+          r := (r * (l - i + 1))/i.
+         ].
+        ^r
+     ]
 
+  ]
 
-      calc: n [
-            | bm l |
-            1 to: n do: [:m |
-             n printNl.
-
-              bm := 0.
-              l := (m-1).
-              0 to: l do: [:k |
-                'halloooo' printNl.
-            ]]]
-
-]
-
-
-myObj := Bernoulli new.
-myObj calc: 20
+   ans := Bernoulli bernoulli: 20.
+   ans do: [:a | Transcript show: a printString; cr].
