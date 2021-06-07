@@ -1,0 +1,40 @@
+Rapport X2
+
+Av: Beata Johansson
+    Simon Larspers Qvist
+
+
+Reflektion
+
+
+COBOL
+
+	Det som var svårt med COBOL var främst att sätta sig in i hur programmet skulle struktureras upp (DATA DIVISION, IDENTIFICATION DIVISION, WORKING STORAGE DIVISION etc.). Även hur variabler och 	listor deklareras i WORKING STORAGE DIVISION var lite speciellt, och skiljde sig från det vi var vana med. Det som dock var bra med COBOL var att resterande delar av koden gick bra att förstå och 	programmera. Däremot tror vi att det lätt kan bli svårt och krångligt när man gör ett större program.
+
+Smalltalk
+	Delar av språkets syntax kändes bekant för oss, vilket var bra. Däremot, var vissa anrop av funktioner något som vi fastnade på länge.
+
+Erlang
+
+	En skillnad med Erlang var att iteration inte kunde användas, så det passade bättre med rekursion för alla iterativa delar i Bernoulli-algoritmen. Men överlag, tyckte vi om Erlangs syntax. Det som 	var mindre bra var att för väldigt små tal som var nära 0, behövde vi avrunda så att 0.0 skulle printas i output. Detta löste sig i andra språk. Det här är ju ett problem som är specifikt lite 	sämre för det här problemet. 
+
+PHP
+
+	PHP var syntaxmässigt inte så svårt att lära sig fort, eftersom att det påminde om andra språk. Vi har inget negativt att säga om PHP som vi märkte av när vi programmerade Bernoullig-algoritmen, 	men från många håll beskrivs PHP som okonsekvent och inte så bra. Så vid större program kanske det är mer fördelaktigt att välja ett annat språk.
+
+Clojure
+
+	Clojure var framförallt svårt att köra, och det var där vi stötte på mycket problem. Vi fick inte det att fungera, och vi skrev programmet i en online editor. Det fungerade bra, och kod och syntax 	var okej. Det fanns saker som skiljde sig, exempelvis aritmetik, men det gick bra att sätta sig in i. Nästlade loopar kunde göras med rekursion, och det var lite annorlunda med det funkade bra. 
+
+Rust
+	Jämfört med de andra programmen så gick rust väldigt snabbt att programmera i, eftersom att vi var vana vid algoritmen som skulle implementeras vid det laget. Det som var svårt och annorlunda med 	Rust var främst de datatyper som används och att variabler som standard inte är muterbara. Vi använde datastrukturen vektor för att lagra resultat, vilket var lite annorlunda från listor eller 	arrays.
+
+
+Allmän Reflektion
+
+Simons favoriter: Erlang, PHP, Rust.
+
+Beatas favoriter: Erlang, Smalltalk, Rust.
+
+Vårt intryck av språken var att språken var väldigt olika, men vissa delar gick att känna igen. COBOL tyckte vi låg långt bort från de andra språken, inte lika användarvänlig som en del andra. Clojure gick bra att skriva och förstå vad man gjorde för något, men vi tror att det kan vara ganska svårt att sätta sig in i någon annans redan skrivna kod. Som i vårat fall två loop - recur i varandra som kan vara rätt svårt att läsa. 
+
